@@ -1,0 +1,30 @@
+{
+  "display": "react-app",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noImplicitThis": true,
+    "esModuleInterop": true,
+    "strictPropertyInitialization": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowUnreachableCode": false,
+    "types": ["node"],
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx",
+  },
+  "include": [
+    "scripts/**/*",
+    "config/**/*",
+    "src/**/*",
+    "test/**/*",
+    "global.d.ts"
+  ]
+}

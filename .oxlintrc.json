@@ -1,0 +1,56 @@
+{
+  "env": {
+    "node": true
+  },
+  "globals": {
+    "foo": "readonly"
+  },
+  "settings": {},
+  "rules": {
+    "eqeqeq": "warn",
+    "named": "error",
+    "google-font-display": "warn",
+    "bad-bitwise-operator": "error",
+    "no-accumulating-spread": "warn",
+    "no-amd": "error",
+    "no-cycle": "error",
+    "no-empty-function": "error",
+    "no-console": [
+      "error",
+      {
+        "allow": ["dir", "info", "warn", "error"]
+      }
+    ],
+    "max-params": ["error", 3],
+    "no-redeclare": "error",
+    "no-duplicates": "error",
+    "no-self-compare": "error",
+    "no-var-requires": "error",
+    "no-anonymous-default-export": "error",
+    "no-unnecessary-type-constraint": "error",
+    "no-non-null-asserted-nullish-coalescing": "error",
+    "no-useless-concat": "error",
+    "no-duplicate-enum-values": "error",
+    "prefer-ts-expect-error": "warn",
+    "prefer-math-trunc": "warn",
+    "prefer-enum-initializers": "warn",
+    "prefer-node-protocol": "warn",
+    "prefer-modern-math-apis": "warn",
+    "prefer-number-properties": "warn",
+    "prefer-modern-dom-apis": "error",
+    "prefer-logical-operator-over-ternary": "warn",
+    "jsx-no-useless-fragment": "error",
+    "approx-constant": "error",
+    "misrefactored-assign-op": "error",
+    "sort-imports": [
+      "error",
+      {
+        "ignoreCase": false,
+        "ignoreDeclarationSort": false,
+        "ignoreMemberSort": false,
+        "memberSyntaxSortOrder": ["none", "all", "multiple", "single"],
+        "allowSeparatedGroups": false
+      }
+    ]
+  }
+}
