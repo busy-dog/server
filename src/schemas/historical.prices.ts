@@ -11,9 +11,9 @@ import {
 
 /**
  * https://github.com/drizzle-team/drizzle-orm/issues/1840
- * TODO: Comments definitions
+ * TODO: Comments definitions;
  * TODO: CHARACTER SET definitions;
- * TODO: COLLATE definitions
+ * TODO: COLLATE definitions;
  */
 export const iHistoricalPrices = mysqlTable('historical_prices', {
   id: serial('id').primaryKey(),

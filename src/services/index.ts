@@ -1,1 +1,2 @@
-export * as iPriceQuery from './price.query';
+export * from './historical.price';
+export * from './rapidapi';

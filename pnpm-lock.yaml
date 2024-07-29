@@ -10,13 +10,13 @@ importers:
     dependencies:
       '@busymango/fetch-driver':
         specifier: ^0.2.7
-        version: 0.2.7(@busymango/is-esm@0.2.2)(@busymango/utils@0.2.4(@busymango/is-esm@0.2.2))(mime@4.0.4)
+        version: 0.2.7(@busymango/is-esm@0.2.3)(@busymango/utils@0.2.4(@busymango/is-esm@0.2.3))(mime@4.0.4)
       '@busymango/is-esm':
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.2.3
+        version: 0.2.3
       '@busymango/utils':
         specifier: ^0.2.4
-        version: 0.2.4(@busymango/is-esm@0.2.2)
+        version: 0.2.4(@busymango/is-esm@0.2.3)
       '@hono/node-server':
         specifier: ^1.12.0
         version: 1.12.0
@@ -85,8 +85,8 @@ packages:
       '@busymango/utils': '>=0.2.2'
       mime: '>=4.0.0'
 
-  '@busymango/is-esm@0.2.2':
-    resolution: {integrity: sha512-p9TXIFSzczjDCqNItvpckgWuo1krpCUiKJT8qK6b4BzwS5gcM5QRhtNir0V13EEQicyxJXEPk6ZHqziqkjnxjg==}
+  '@busymango/is-esm@0.2.3':
+    resolution: {integrity: sha512-kOcDLFVZ8Htc7nKvp+VMmJm3GwEXBhbEwuNXw6bITFfnKaO01eEB6Bv51Fy0oSLZuJiwu5guEK7RZeFLlBbcsg==}
 
   '@busymango/utils@0.2.4':
     resolution: {integrity: sha512-ebMhVUtxCEfgfFMVwBhpx/Own2jSaFi9b3vmUJUrdo2dBXBx1OSshfbBCqJPo+Y7ULv7ht3akZHr5nbFc4reRQ==}
@@ -1195,17 +1195,17 @@ packages:
 
 snapshots:
 
-  '@busymango/fetch-driver@0.2.7(@busymango/is-esm@0.2.2)(@busymango/utils@0.2.4(@busymango/is-esm@0.2.2))(mime@4.0.4)':
+  '@busymango/fetch-driver@0.2.7(@busymango/is-esm@0.2.3)(@busymango/utils@0.2.4(@busymango/is-esm@0.2.3))(mime@4.0.4)':
     dependencies:
-      '@busymango/is-esm': 0.2.2
-      '@busymango/utils': 0.2.4(@busymango/is-esm@0.2.2)
+      '@busymango/is-esm': 0.2.3
+      '@busymango/utils': 0.2.4(@busymango/is-esm@0.2.3)
       mime: 4.0.4
 
-  '@busymango/is-esm@0.2.2': {}
+  '@busymango/is-esm@0.2.3': {}
 
-  '@busymango/utils@0.2.4(@busymango/is-esm@0.2.2)':
+  '@busymango/utils@0.2.4(@busymango/is-esm@0.2.3)':
     dependencies:
-      '@busymango/is-esm': 0.2.2
+      '@busymango/is-esm': 0.2.3
       '@ungap/structured-clone': 1.2.0
 
   '@colors/colors@1.6.0': {}

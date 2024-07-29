@@ -10,7 +10,7 @@ interface BullionsPriceModel {
 /**
  * 获取当前金价、银价
  */
-export const iBullionsPriceQuery = () =>
+export const iSvcBullionsPriceQuery = () =>
   drive<BullionsPriceModel>({
     api: `https://gold-price-live.p.rapidapi.com/get_metal_prices`,
     parse: async (res, ctx) => {

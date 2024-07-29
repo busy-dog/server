@@ -4,27 +4,34 @@
 
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
-import { iSyncPriceCronJob } from 'src/crons';
-import { register } from 'src/routes';
-import { iServerLog } from './helpers';
+import { crons } from 'src/crons';
+import { routes } from 'src/routes';
+import { iServerLog } from 'src/helpers';
+import { middlewares } from 'src/middlewares';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import dayjs from 'dayjs';
 
-const { PORT = '3000' } = process.env;
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Asia/Shanghai');
 
-const { HOST: hostname = '0.0.0.0' } = process.env;
-
-const port = parseInt(PORT, 10);
+const { PORT = '3000', HOST = '0.0.0.0' } = process.env;
 
 const app = new Hono();
 
-(function effect() {
-  register(app);
-})();
-
-const server = serve({ fetch: app.fetch, port, hostname });
+const server = serve({
+  hostname: HOST,
+  port: Number(PORT),
+  fetch: app.fetch,
+});
 
 server.addListener('listening', () => {
-  iServerLog(`Server is running at ${hostname}:${port}`);
-  iSyncPriceCronJob.start();
+  iServerLog(dayjs().toString());
+  iServerLog(`Server is running at ${HOST}:${PORT}`);
+  middlewares(app);
+  routes(app);
+  crons(app);
 });
 
 server.addListener('close', async () => {});
