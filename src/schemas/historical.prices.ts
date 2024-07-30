@@ -1,12 +1,12 @@
 import { sql } from 'drizzle-orm';
 import {
+  datetime,
+  float,
   mysqlEnum,
   mysqlTable,
-  float,
-  varchar,
-  datetime,
   serial,
   tinyint,
+  varchar,
 } from 'drizzle-orm/mysql-core';
 
 /**

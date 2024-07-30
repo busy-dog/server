@@ -1,6 +1,6 @@
 {
-  "display": "react-app",
   "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "react-app",
   "compileOnSave": true,
   "compilerOptions": {
     "target": "ESNext",
@@ -18,7 +18,7 @@
     "types": ["node"],
     "baseUrl": ".",
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
+    "jsxImportSource": "hono/jsx"
   },
   "include": [
     "scripts/**/*",

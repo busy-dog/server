@@ -1,9 +1,10 @@
-import { iSvcBullionsPriceInfo } from 'src/services';
-
-import { Hono } from 'hono';
+import type { Hono } from 'hono';
 import { validator } from 'hono/validator';
-import { compact, iArray, iOmit, theLast } from '@busymango/utils';
-import { isEmpty, isNonEmptyString } from '@busymango/is-esm';
+
+import { compact, iArray, iOmit, theFirst } from '@busymango/utils';
+import { isEmpty, isNonEmptyString, isNaN } from '@busymango/is-esm';
+
+import { iSvcBullionsPriceInfo } from 'src/services';
 import { decorator } from 'src/helpers';
 
 /**
@@ -25,7 +26,7 @@ export const iCtlBullionsPriceInfo = (api: string, app: Hono) => {
     }),
     async ({ json, req }) => {
       return json(
-        decorator(theLast(await iSvcBullionsPriceInfo(req.valid('query')))),
+        decorator(theFirst(await iSvcBullionsPriceInfo(req.valid('query')))),
       );
     },
   );

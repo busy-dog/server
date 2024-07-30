@@ -1,5 +1,5 @@
-import { hex } from 'ansis';
 import type { Redis } from 'ioredis';
+import { hex } from 'ansis';
 import { nanoid } from 'nanoid';
 import { AMBER } from 'src/constants';
 

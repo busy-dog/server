@@ -1,8 +1,10 @@
 export interface IEnv {
+  /** 时区 */
+  TZ: string;
   /** 服务端口号 */
-  PORT?: string;
-  /** 服务部署时区 */
-  TIME_ZONE: string;
+  PORT: string;
+  /** 服务主机 */
+  HOST: string;
   /** abstract.com key */
   ABSTRACT_API_KEY: string;
   /** abstract.com 域名 */
@@ -14,6 +16,7 @@ export interface IEnv {
   /** MYSQL(public) 用户 */
   MYSQL_PUBLIC_USER: string;
   /** MYSQL(public) 地址 */
+
   MYSQL_PUBLIC_HOST: string;
   /** MYSQL(public) 密码 */
   MYSQL_PUBLIC_PASSWORD: string;

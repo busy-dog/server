@@ -2,9 +2,9 @@
   "name": "@busymango/server",
   "scripts": {
     "dev": "dotenvx run -- tsx watch src/index.ts",
+    "biome:format": "pnpm biome format --write --colors=force --verbose .",
     "drizzle": "pnpm drizzle-kit generate",
-    "encrypt": "pnpm dotenvx encrypt",
-    "lint": "oxlint --fix && prettier . --write"
+    "encrypt": "pnpm dotenvx encrypt"
   },
   "type": "module",
   "dependencies": {
@@ -15,21 +15,19 @@
     "ansis": "^3.2.0",
     "cron": "^3.1.7",
     "dayjs": "^1.11.11",
-    "drizzle-orm": "^0.32.0",
-    "hono": "^4.4.12",
+    "drizzle-orm": "^0.32.1",
+    "hono": "^4.5.3",
     "ioredis": "^5.4.1",
     "mime": "^4.0.4",
     "mysql2": "^3.10.2",
-    "nanoid": "^5.0.7",
-    "node-fetch": "^3.3.2"
+    "nanoid": "^5.0.7"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.8.3",
     "@dotenvx/dotenvx": "^1.6.2",
     "@types/node": "^20.14.10",
     "drizzle-kit": "^0.23.0",
     "globals": "^15.8.0",
-    "oxlint": "^0.6.0",
-    "prettier": "^3.3.2",
     "tsx": "^4.7.1",
     "typescript": "^5.5.3"
   }

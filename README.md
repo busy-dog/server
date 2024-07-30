@@ -12,3 +12,5 @@ open http://localhost:3000
 https://hono.dev/docs/getting-started/basic#return-json
 https://sidorares.github.io/node-mysql2/zh-CN/docs
 https://orm.drizzle.team/docs/select
+
+https://zhuanlan.zhihu.com/p/705466009

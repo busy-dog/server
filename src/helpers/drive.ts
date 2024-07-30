@@ -17,7 +17,7 @@ export const { drive } = new Driver([
       try {
         const { host } = new URL(api);
         headers.set('x-rapidapi-host', host);
-      } catch (error) {
+      } catch (_) {
         console.warn('Rapidapi需要包含域名信息');
       }
     }
@@ -27,7 +27,7 @@ export const { drive } = new Driver([
         const { origin, pathname, searchParams } = new URL(api);
         searchParams.append('api_key', ABSTRACT_API_KEY);
         context.api = [origin, pathname, '?', searchParams.toString()].join('');
-      } catch (error) {
+      } catch (_) {
         console.warn('Abstractapi需要包含域名信息');
       }
     }
