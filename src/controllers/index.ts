@@ -4,8 +4,9 @@ import { validator } from 'hono/validator';
 import { compact, iArray, iOmit, theFirst } from '@busymango/utils';
 import { isEmpty, isNonEmptyString, isNaN } from '@busymango/is-esm';
 
-import { iSvcBullionsPriceInfo } from 'src/services';
+import { iSvcBullionsPriceInfo, iSvcCNArea2020Search } from 'src/services';
 import { decorator } from 'src/helpers';
+import { session } from 'src/middlewares/session';
 
 /**
  * 获取当前国际金银价格（单位:美元/盎司）
@@ -30,4 +31,10 @@ export const iCtlBullionsPriceInfo = (api: string, app: Hono) => {
       );
     },
   );
+};
+
+export const iCtlRegionsSearch = (api: string, app: Hono) => {
+  app.get(api, session(), async ({ json }) => {
+    return json(decorator(theFirst(await iSvcCNArea2020Search())));
+  });
 };

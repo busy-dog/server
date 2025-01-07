@@ -18,7 +18,11 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault(TZ);
 
-const app = new Hono();
+const app = new Hono<{
+  Variables: {
+    echo: (str: string) => string;
+  };
+}>();
 
 const server = serve({
   hostname: HOST,

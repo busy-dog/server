@@ -14,3 +14,6 @@ https://sidorares.github.io/node-mysql2/zh-CN/docs
 https://orm.drizzle.team/docs/select
 
 https://zhuanlan.zhihu.com/p/705466009
+
+日志
+分库分表
