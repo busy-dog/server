@@ -17,3 +17,6 @@ https://zhuanlan.zhihu.com/p/705466009
 
 日志
 分库分表
+
+Why not controller
+https://hono.dev/docs/guides/best-practices#don-t-make-controllers-when-possible

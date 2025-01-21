@@ -1,7 +1,7 @@
 import type { Redis } from 'ioredis';
 import { hex } from 'ansis';
 import { nanoid } from 'nanoid';
-import { AMBER } from 'src/constants';
+import { colors } from 'src/constants';
 
 export interface DistributedLockParams {
   ttl?: number;
@@ -30,7 +30,7 @@ export class DistributedLock {
     return `[DistributedLock: ${params.toString()}] ${text}`;
   };
 
-  private info = (text: string) => console.info(hex(AMBER)(this.msg(text)));
+  private info = (text: string) => console.info(hex(colors.amber)(this.msg(text)));
 
   private startAutoRenewal() {
     const { key, redis, ttl } = this;
