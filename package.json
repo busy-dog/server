@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "dotenvx run -- tsx watch src/run.ts",
     "test": "dotenvx run -- tsx --test $(find test -type f -name '*.spec.ts')",
-    "biome:format": "pnpm biome format --write --colors=force --verbose .",
+    "format": "biome check --write . && biome format --write --colors=force --verbose .",
     "drizzle": "pnpm drizzle-kit generate",
     "encrypt": "pnpm dotenvx encrypt"
   },

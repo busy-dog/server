@@ -6,7 +6,7 @@ export async function iCheckMysql() {
   try {
     const rows = await iMySQLDBCommon.execute('SELECT 1');
     if (!(rows.length > 1)) {
-      throw new Error('can\'t execute \`SELECT 1\`');
+      throw new Error("can't execute `SELECT 1`");
     }
     report.info('MySQL connection is healthy', report.time());
   } catch (error) {

@@ -9,6 +9,24 @@
     "lineWidth": 80,
     "attributePosition": "auto"
   },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "single",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "all",
+      "semicolons": "always",
+      "arrowParentheses": "always",
+      "bracketSpacing": true,
+      "bracketSameLine": false,
+      "quoteStyle": "single",
+      "attributePosition": "auto"
+    }
+  },
+  "json": {
+    "formatter": {
+      "trailingCommas": "none"
+    }
+  },
   "organizeImports": {
     "enabled": true
   },
@@ -80,6 +98,26 @@
               },
               {
                 "selector": {
+                  "kind": "typeMember"
+                },
+                "formats": [
+                  "snake_case",
+                  "camelCase",
+                  "PascalCase"
+                ]
+              },
+              {
+                "selector": {
+                  "kind": "const",
+                  "scope": "global"
+                },
+                "formats": [
+                  "CONSTANT_CASE",
+                  "camelCase"
+                ]
+              },
+              {
+                "selector": {
                   "kind": "enum"
                 },
                 "match": "_?([^_]*)_?",
@@ -112,17 +150,6 @@
                 "match": "_?([^_]*)_?",
                 "formats": [
                   "PascalCase"
-                ]
-              },
-              {
-                "selector": {
-                  "kind": "variable"
-                },
-                "match": "_?([^_]*)_?",
-                "formats": [
-                  "camelCase",
-                  "PascalCase",
-                  "CONSTANT_CASE"
                 ]
               }
             ]
@@ -160,19 +187,6 @@
         "useGetterReturn": "error",
         "useValidTypeof": "error"
       }
-    }
-  },
-  "javascript": {
-    "formatter": {
-      "jsxQuoteStyle": "single",
-      "quoteProperties": "asNeeded",
-      "trailingCommas": "all",
-      "semicolons": "always",
-      "arrowParentheses": "always",
-      "bracketSpacing": true,
-      "bracketSameLine": false,
-      "quoteStyle": "single",
-      "attributePosition": "auto"
     }
   },
   "overrides": [

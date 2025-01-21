@@ -2,8 +2,8 @@
  * @docs https://github.com/kelektiv/node-cron
  */
 
-import type { Hono } from 'hono';
 import { CronJob } from 'cron';
+import type { Hono } from 'hono';
 import { health } from 'src/helpers';
 
 const { TZ } = process.env;

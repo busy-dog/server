@@ -1,8 +1,7 @@
-
 import type { Ansis } from 'ansis';
 import { hex } from 'ansis';
 import dayjs from 'dayjs';
-import { colors, DateFormatEn } from 'src/constants';
+import { DateFormatEn, colors } from 'src/constants';
 
 export function time(code?: string): string {
   const text = dayjs().format(DateFormatEn.DateSec);
@@ -21,7 +20,5 @@ export const ansis = (...args: (Ansis | string)[]): void => {
   const timer = time(colors.green.lime).toString();
   const source = [timer as Ansis | string].concat(args);
   const marker = hex(colors.green.lime)('[drizzle]').toString();
-  console.info(
-    source.map((e) => [marker, e.toString()].join(' ')).join('\n'),
-  );
+  console.info(source.map((e) => [marker, e.toString()].join(' ')).join('\n'));
 };

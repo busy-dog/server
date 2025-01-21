@@ -8,7 +8,7 @@ export const amber = '#D1A20D';
 export const green = {
   /** 草绿色 */
   lime: '#0DD953',
-}
+};
 
 /** 水蓝色 */
 export const aqua = '#0DC5D1';
@@ -17,10 +17,10 @@ export const aqua = '#0DC5D1';
 export const magenta = '#D10D7F';
 
 /** 猩红色 */
-export const scarlet = '#FF3A1E'
+export const scarlet = '#FF3A1E';
 
 /** 紫色 */
 export const purple = {
   /** 电紫色 */
   electric: '#9210FF',
-}
+};

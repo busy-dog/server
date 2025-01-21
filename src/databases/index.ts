@@ -1,12 +1,12 @@
 import { hex } from 'ansis';
-import { format } from 'mysql2';
-import { createPool } from 'mysql2/promise';
 import type { Logger } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/mysql2';
 import { Redis } from 'ioredis';
+import { format } from 'mysql2';
+import { createPool } from 'mysql2/promise';
 
-import { report } from 'src/helpers';
 import { colors } from 'src/constants';
+import { report } from 'src/helpers';
 
 const {
   MYSQL_PUBLIC_HOST: host,

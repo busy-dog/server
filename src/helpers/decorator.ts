@@ -1,5 +1,5 @@
-import { assign, ifnot } from '@busymango/utils';
 import { isError } from '@busymango/is-esm';
+import { assign, ifnot } from '@busymango/utils';
 
 export const decorator = <T>(
   data: T,

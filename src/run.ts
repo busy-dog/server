@@ -5,10 +5,10 @@
 import { serve } from '@hono/node-server';
 import dayjs from 'dayjs';
 
-const { PORT, HOST } = process.env;
-
-import { app } from './app'
+import { app } from './app';
 import { report } from './helpers';
+
+const { PORT, HOST } = process.env;
 
 const server = serve({
   hostname: HOST,
