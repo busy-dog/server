@@ -1,5 +1,7 @@
 import { isError } from '@busymango/is-esm';
+
 import { iMySQLDBCommon } from 'src/databases';
+
 import * as report from './report';
 
 export async function iCheckMysql() {
@@ -11,7 +13,7 @@ export async function iCheckMysql() {
     report.info('MySQL connection is healthy', report.time());
   } catch (error) {
     if (isError(error)) {
-      console.error('Error during MySQL health check:', error.message);
+      report.error('Error during MySQL health check:', error.message);
     }
   }
 }

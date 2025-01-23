@@ -6,8 +6,9 @@ import { parse } from '@busymango/utils';
 
 import { COOKIE_PRIFIX, COOKIE_SESSION_NAME } from 'src/constants';
 import { iRedisDB0 } from 'src/databases';
+import type { GithubAuthorize } from 'src/services';
 
-export interface SessionValue {}
+export interface SessionValue extends GithubAuthorize {}
 
 export const name = [COOKIE_PRIFIX, COOKIE_SESSION_NAME].join('_');
 

@@ -1,3 +1,12 @@
+import { isString } from '@busymango/is-esm';
+import { compact, iSearchParams } from '@busymango/utils';
+import type { Context } from 'hono';
+import { drive, session } from 'src/helpers';
+
+const host = 'https://github.com';
+
+const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = process.env;
+
 export interface GithubUserInfo {
   // 用户登录名
   login: string;
@@ -87,3 +96,78 @@ export interface GithubUserInfo {
     collaborators: number;
   };
 }
+
+const iGithubDrive = <T>(
+  api: string,
+  {
+    data,
+    token,
+    method = 'GET',
+  }: {
+    token?: string;
+    data?: object;
+    method?: string;
+  },
+) =>
+  drive<T>({
+    data,
+    method,
+    api: `https://api.github.com${api}`,
+    headers: compact<[string, string]>([
+      ['X-GitHub-Api-Version', '2022-11-28'],
+      ['Accept', 'application/vnd.github+json'],
+      token && ['Authorization', `Bearer ${token}`],
+    ]) satisfies HeadersInit,
+  });
+
+export interface GithubErrorBody {
+  documentation_url: string;
+  message: string;
+  status: '404';
+}
+
+export interface GithubAuthorize {
+  scope: string;
+  token_type: 'bearer';
+  access_token: string;
+}
+
+/** */
+export const token = async (
+  ctx: Context<
+    Record<string, never>,
+    string,
+    {
+      in: Record<string, unknown>;
+      out: {
+        query: {
+          code: string;
+        };
+      };
+    }
+  >,
+) => {
+  const { code } = ctx.req.valid('query');
+  const api = host + '/login/oauth/access_token';
+  const res = await drive.post<GithubAuthorize>(api, {
+    code,
+    client_id: GITHUB_CLIENT_ID,
+    client_secret: GITHUB_CLIENT_SECRET,
+  });
+  if (isString(res)) {
+    throw new Error('Github error:' + res);
+  }
+  await session.set(code, res);
+};
+
+export const userinfo = async (token: string) =>
+  iGithubDrive<GithubUserInfo>('/user', { token });
+
+export const signin = async (ctx: Context) =>
+  [
+    `${host}/login/oauth/authorize`,
+    iSearchParams({
+      client_id: GITHUB_CLIENT_ID,
+      state: session.get(ctx),
+    }),
+  ].join('?');

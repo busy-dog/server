@@ -5,14 +5,6 @@ export interface IEnv {
   PORT: string;
   /** 服务主机 */
   HOST: string;
-  /** abstract.com key */
-  ABSTRACT_API_KEY: string;
-  /** abstract.com 域名 */
-  ABSTRACT_API_DOMAIN: string;
-  /** rapidapi.com key */
-  RAPIDAPI_API_KEY: string;
-  /** rapidapi.com 域名 */
-  RAPIDAPI_API_DOMAIN: string;
   /** MYSQL(public) 用户 */
   MYSQL_PUBLIC_USER: string;
   /** MYSQL(public) 地址 */
@@ -22,6 +14,11 @@ export interface IEnv {
   MYSQL_PUBLIC_PASSWORD: string;
   /** REDIS(public) 地址 */
   REDIS_PUBLIC_HOST: string;
+
+  /** Github mango ID */
+  GITHUB_CLIENT_ID: string;
+  /** Github mango 密钥 */
+  GITHUB_CLIENT_SECRET: string;
 }
 
 /** 拓展`global`属性 */

@@ -9,6 +9,7 @@ import { createMiddleware } from 'hono/factory';
 import { nanoid } from 'nanoid';
 import { crons } from './crons';
 import { session } from './helpers';
+import { register } from './routes';
 
 const { TZ } = process.env;
 
@@ -42,3 +43,4 @@ export const app = new Hono()
   );
 
 crons(app);
+register(app);

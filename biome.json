@@ -89,6 +89,15 @@
             "conventions": [
               {
                 "selector": {
+                  "kind": "objectLiteralMember"
+                },
+                "formats": [
+                  "snake_case",
+                  "camelCase"
+                ]
+              },
+              {
+                "selector": {
                   "kind": "enumMember"
                 },
                 "match": "_?([^_]*)_?",
