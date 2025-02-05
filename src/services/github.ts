@@ -1,8 +1,10 @@
-import { isString } from '@busymango/is-esm';
-import { iSearchParams } from '@busymango/utils';
 import type { Context } from 'hono';
 import { getCookie } from 'hono/cookie';
-import { session } from 'src/helpers';
+
+import { isString } from '@busymango/is-esm';
+import { iSearchParams } from '@busymango/utils';
+import { drive, drives, session } from 'src/helpers';
+import { changeCase } from 'src/utils';
 
 const host = 'https://github.com';
 
@@ -121,44 +123,19 @@ export interface GithubAuthorize extends GithubErrorModel {
  * @param code - 授权码
  * @returns Github OAuth 令牌
  */
-export const token = async (
-  code: string,
-  // ctx: Context<
-  //   Record<string, never>,
-  //   string,
-  //   {
-  //     in: Record<string, unknown>;
-  //     out: {
-  //       query: {
-  //         code: string;
-  //       };
-  //     };
-  //   }
-  // >,
-) => {
-  const api = 'https://github.com/login/oauth/access_token';
-
-  const res = await fetch(api, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ['Accept']: 'application/json',
-    },
-    body: JSON.stringify({
+export const token = async (code: string) => {
+  const host = 'https://github.com';
+  const api = '/login/oauth/access_token';
+  const data = await drive.post<GithubAuthorize>(
+    `${host}${api}`,
+    changeCase({
       code,
-      accept_format: 'json',
-      client_id: GITHUB_CLIENT_ID,
-      client_secret: GITHUB_CLIENT_SECRET,
+      clientId: GITHUB_CLIENT_ID,
+      clientSecret: GITHUB_CLIENT_SECRET,
     }),
-  });
+    { headers: [['Accept', 'application/json']] },
+  );
 
-  const data = (await res.json()) as GithubAuthorize;
-  // const res = await drive.post<GithubAuthorize>(api, {
-  //   code,
-  //   accept: 'json',
-  //   client_id: GITHUB_CLIENT_ID,
-  //   client_secret: GITHUB_CLIENT_SECRET,
-  // });
   if (isString(data)) {
     throw new Error('GitHub OAuth error:' + data);
   }
@@ -173,11 +150,26 @@ export const token = async (
  * @param ctx - 上下文
  * @returns Github 授权 URL
  */
-export const signin = async (ctx: Context) =>
-  [
+export const authorize = async (
+  ctx: Context,
+  _: {
+    redirect?: string;
+  } = {},
+) => {
+  return [
     `${host}/login/oauth/authorize`,
-    iSearchParams({
-      client_id: GITHUB_CLIENT_ID,
-      state: getCookie(ctx, session.name),
-    }),
+    iSearchParams(
+      changeCase({
+        // redirectUri: redirect,
+        clientId: GITHUB_CLIENT_ID,
+        state: getCookie(ctx, session.name),
+      }),
+    ),
   ].join('?');
+};
+
+export const userinfo = async (token: string) => {
+  const res = await drives.github<GithubUserInfo>('/user', { token });
+  if ('status' in res) throw new Error(res.message);
+  return res;
+};

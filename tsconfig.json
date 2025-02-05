@@ -25,6 +25,7 @@
     "config/**/*",
     "src/**/*",
     "test/**/*",
-    "global.d.ts"
+    "global.d.ts",
+    "drizzle.config.ts"
   ]
 }

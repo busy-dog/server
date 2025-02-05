@@ -1,7 +1,3 @@
-/**
- * https://github.com/kakuilan/china_area_mysql
- */
-
 import {
   bigint,
   char,
@@ -19,7 +15,7 @@ import {
  * ENGINE=MyISAM
  * AUTO_INCREMENT=758050
  */
-export const iCNArea2020 = mysqlTable('cnarea_2020', {
+const table = mysqlTable('area_cn_2023', {
   /** `id` mediumint unsigned NOT NULL AUTO_INCREMENT */
   id: serial('id').primaryKey(),
   /** 层级 */
@@ -56,3 +52,7 @@ export const iCNArea2020 = mysqlTable('cnarea_2020', {
     .notNull()
     .default('0.000000'),
 });
+
+export const cn2023 = {
+  table,
+};

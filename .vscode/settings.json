@@ -1,0 +1,54 @@
+{
+  "files.eol": "\n",
+  "editor.tabSize": 2,
+  "editor.indentSize": "tabSize",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "explicit",
+    "source.organizeImports": "explicit",
+    "source.fixAll.biome": "explicit",
+    "quickfix.biome": "explicit"
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "git.ignoreLimitWarning": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "src/**/*.d.ts": true,
+    "test/**/*.d.ts": true
+  },
+  "files.associations": {
+    "*.env": "ini",
+    "assets/index.html": "ejs"
+  },
+  "cssVariables.lookupFiles": [
+    "**/themes/*.css",
+    "src/styles/cover.ant.token.global.scss"
+  ],
+  "[svg]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "DotJoshJohnson.xml"
+  },
+  "[json]": {
+    "editor.formatOnSave": true,
+    "editor.quickSuggestions": {
+      "other": "on",
+      "comments": "off",
+      "strings": true
+    },
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "biome.lspBin": "node_modules/.bin/biome"
+}

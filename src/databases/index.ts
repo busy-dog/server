@@ -1,11 +1,8 @@
-import { hex } from 'ansis';
 import type { Logger } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/mysql2';
 import { Redis } from 'ioredis';
-import { format } from 'mysql2';
 import { createPool } from 'mysql2/promise';
 
-import { colors } from 'src/constants';
 import { report } from 'src/helpers';
 
 const {
@@ -16,11 +13,11 @@ const {
 
 export class AnsisLogger implements Logger {
   logQuery(query: string, params: unknown[]): void {
-    report.ansis(hex(colors.violet)(format(query, params)));
+    report.mysql(query, params);
   }
 }
 
-export const iMySQLDBCommon = drizzle(
+const common = drizzle(
   createPool({
     host,
     user,
@@ -38,8 +35,18 @@ export const iMySQLDBCommon = drizzle(
   { logger: new AnsisLogger() },
 );
 
-export const iRedisDB0 = new Redis({
-  host: process.env.REDIS_PUBLIC_HOST,
-  port: 6379,
-  db: 0,
-});
+export const db = { common };
+
+export const redis = [0].map(
+  (db) =>
+    new Redis({
+      host: process.env.REDIS_PUBLIC_HOST,
+      port: 6379,
+      db,
+    }),
+);
+
+export const destroy = async () => {
+  await db.common.$client?.end();
+  redis.forEach((e) => e.quit());
+};

@@ -17,10 +17,10 @@ const server = serve({
 });
 
 server.addListener('listening', () => {
-  report.info(dayjs.tz.guess(), report.time());
-  report.info(`Server is running at ${HOST}:${PORT}`);
+  report.info(dayjs.tz.guess());
+  report.info(`Running at ${HOST}:${PORT}`);
 });
 
 server.addListener('close', async () => {
-  report.info(`Server close at ${report.time()}`);
+  report.info(`Close server`);
 });

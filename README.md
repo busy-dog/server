@@ -20,3 +20,12 @@ https://zhuanlan.zhihu.com/p/705466009
 
 Why not controller
 https://hono.dev/docs/guides/best-practices#don-t-make-controllers-when-possible
+
+FAQ
+
+```bash
+[TypeError] fetch failed TypeError: fetch failed
+  at node:internal/deps/undici/undici:12502:13
+```
+
+如果调用 fetch 方法失败并报错如上，请检查你的 node 版本是否和系统匹配（如果你使用 arm64 架构的 mac，请使用 arm64 版本的 node，Rosetta 2 转译的 intel 版本的 node 可能会有问题）

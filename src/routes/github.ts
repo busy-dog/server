@@ -3,21 +3,11 @@ import { validator } from 'hono/validator';
 
 import { isError, isString } from '@busymango/is-esm';
 
-import { decorator, iGithubDrive, report, session } from 'src/helpers';
-import { type GithubUserInfo, github } from 'src/services';
+import { decorator, report, session } from 'src/helpers';
+import { services } from 'src/services';
 
 export const register = (app: Hono) => {
-  /**
-   * Github 授权重定向
-   */
-  app.get('/signin/:method', async (ctx) => {
-    const method = ctx.req.param('method');
-
-    if (method === 'github') {
-      return ctx.redirect(await github.signin(ctx));
-    }
-    return ctx.json(decorator(new Error('Undefined signin method')), 400);
-  });
+  const { github, users } = services;
 
   /**
    * Github 授权回调 URI
@@ -39,21 +29,35 @@ export const register = (app: Hono) => {
       }
       return { code, state };
     }),
-    async (ctx) => {
+    async ({ req, redirect }) => {
       try {
-        const { code, state } = ctx.req.valid('query');
+        const { code } = req.valid('query');
         const res = await github.token(code);
-        if (!isString(res.access_token)) {
+        const { access_token: token } = res;
+
+        if (!isString(token)) {
           throw new Error(
             'Invalid GitHub OAuth response: Missing access token',
           );
         }
-        await session.set(state, res);
-        return ctx.redirect('http://127.0.0.1:8080');
+
+        const info = await github.userinfo(token);
+        const githubId = info.id.toString();
+
+        if (await users.exist({ githubId })) {
+          // 如果用户已存在，则更新用户信息
+        } else {
+          await users.create({ github: info });
+        }
+
+        const { state } = req.valid('query');
+        const { id } = await users.info({ githubId });
+        await session.set(state, { ...res, id });
+        return redirect('http://127.0.0.1:8080');
       } catch (error) {
+        report.error(error);
         const msg = isError(error) ? error.message : '';
-        report.error(msg);
-        return ctx.redirect('http://127.0.0.1:8080?error=' + msg);
+        return redirect('http://127.0.0.1:8080?error=' + msg);
       }
     },
   );
@@ -61,13 +65,17 @@ export const register = (app: Hono) => {
   /**
    * 获取 Github 用户信息
    */
-  app.get('/github/userinfo', async (ctx) => {
-    const { access_token: token } = (await session.get(ctx)) ?? {};
-    if (!token) {
+  app.get(
+    '/github/userinfo',
+    validator('cookie', async (_, ctx) => {
+      const res = await session.get(ctx);
+      const { access_token: token } = res ?? {};
+      if (isString(token)) return { token };
       return ctx.json(decorator(new Error('Github token not find')), 401);
-    }
-    return ctx.json(
-      decorator(await iGithubDrive<GithubUserInfo>('/user', { token })),
-    );
-  });
+    }),
+    async ({ req, json }) => {
+      const { token } = req.valid('cookie');
+      return json(decorator(await github.userinfo(token)));
+    },
+  );
 };
