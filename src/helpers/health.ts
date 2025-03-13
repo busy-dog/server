@@ -1,5 +1,6 @@
 import { db, redis } from 'src/databases';
 
+import { isNumber } from '@busymango/is-esm';
 import * as report from './report';
 
 export async function iRedisChecker() {
@@ -17,14 +18,15 @@ export async function iRedisChecker() {
   }
 }
 
-export async function iMysqlChecker() {
+export async function iPostgresqlChecker() {
   try {
-    const rows = await db.common.execute('SELECT 1');
-    if (!(rows.length > 1)) {
-      throw new Error("can't execute `SELECT 1`");
+    const cmd = 'select 1';
+    const res = await db.common.execute(cmd);
+    if (isNumber(res.rowCount) && res.rowCount !== 1) {
+      throw new Error(`can't execute \`${cmd}\``);
     }
-    report.info('MySQL connection is healthy');
+    report.info('Postgresql connection is healthy');
   } catch (error) {
-    report.error(error, { name: 'Error during MySQL health check' });
+    report.error(error, { name: 'Error during Postgresql health check' });
   }
 }

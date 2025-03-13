@@ -1,4 +1,3 @@
-import { format } from 'mysql2';
 
 import { type PlainObject, isError, isPlainObject } from '@busymango/is-esm';
 import { compact } from '@busymango/utils';
@@ -71,10 +70,11 @@ export const error = (
   }
 };
 
-export const mysql = (query: string, params: unknown[]): void => {
+export const sql = (query: string, params: unknown[]): void => {
   console.info(
     time(colors.violet),
-    hex(colors.violet)('[drizzle]'),
-    '\n\t' + hex(colors.violet)(format(query, params)),
+    hex(colors.violet)('[sql]'),
+    hex(colors.violet)(query),
+    // '\n\t' + hex(colors.violet)(format(query, params)),
   );
 };

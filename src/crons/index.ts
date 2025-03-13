@@ -17,8 +17,8 @@ export const iHealthCheckCronJob = CronJob.from({
   // 每天从午夜（0点）开始，每隔三小时执行一次
   cronTime: '0 0 0/3 * * *',
   onTick: () => {
-    health.iMysqlChecker();
     health.iRedisChecker();
+    health.iPostgresqlChecker();
   },
 });
 

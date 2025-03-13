@@ -1,19 +1,18 @@
-import type { Hono } from 'hono';
-import type { Context } from 'hono';
+import type { Context, Hono } from 'hono';
 import { validator } from 'hono/validator';
 
 import { isNil, isString } from '@busymango/is-esm';
 import { authenticator } from 'otplib';
 
 import { SERVER_NAME } from 'src/constants';
-import { decorator, report, session } from 'src/helpers';
+import { report, resHandler, session } from 'src/helpers';
 import type { UserInfoModel } from 'src/schemas';
 import { services } from 'src/services';
 
 export const register = (app: Hono) => {
   const issuer = SERVER_NAME;
   const { users } = services;
-
+  const { decorator } = resHandler;
   const handler = async <T>(
     id: string,
     ctx: Context,

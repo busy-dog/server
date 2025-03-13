@@ -3,15 +3,15 @@ import {
   char,
   date,
   index,
-  mysqlTable,
+  pgTable,
   uniqueIndex,
   varchar,
-} from 'drizzle-orm/mysql-core';
+} from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 
-import { common } from './common';
+import { cols } from 'src/helpers';
 
-const table = mysqlTable(
+const table = pgTable(
   'users',
   {
     id: char('id', { length: 36 }).primaryKey(),
@@ -30,7 +30,8 @@ const table = mysqlTable(
     otpAuthUri: varchar('otp_auth_uri', { length: 255 }),
     otpEnabled: boolean('otp_enabled').default(false),
     otpVerified: boolean('otp_verified').default(false),
-    ...common,
+    ...cols.owners,
+    ...cols.timestamps,
   },
   (table) => [
     index('role_index').on(table.role),

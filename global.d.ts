@@ -8,19 +8,19 @@ export interface IEnv {
   /** AES 密钥 */
   AES_KEY: string;
 
-  /** MYSQL(public) 用户 */
-  MYSQL_PUBLIC_USER: string;
-  /** MYSQL(public) 地址 */
-  MYSQL_PUBLIC_HOST: string;
-  /** MYSQL(public) 端口 */
-  MYSQL_PUBLIC_PORT: string;
-  /** MYSQL(public) 密码 */
-  MYSQL_PUBLIC_PASSWORD: string;
-  /** MYSQL(public) 数据库 */
-  MYSQL_PUBLIC_DATABASE: string;
+  /** POSTGRESQL(public) 用户 */
+  POSTGRESQL_USER: string;
+  /** POSTGRESQL(public) 地址 */
+  POSTGRESQL_HOST: string;
+  /** POSTGRESQL(public) 端口 */
+  POSTGRESQL_PORT: string;
+  /** POSTGRESQL(public) 密码 */
+  POSTGRESQL_PASSWORD: string;
+  /** POSTGRESQL(public) 数据库 */
+  POSTGRESQL_DATABASE: string;
 
   /** REDIS(public) 地址 */
-  REDIS_PUBLIC_HOST: string;
+  REDIS_HOST: string;
 
   /** Google 客户端ID */
   GOOGLE_CLIENT_ID: string;

@@ -1,14 +1,14 @@
 import {
   boolean,
-  mysqlTable,
+  pgTable,
   smallint,
   text,
   varchar,
-} from 'drizzle-orm/mysql-core';
+} from 'drizzle-orm/pg-core';
 
-import { common } from './common';
+import { cols } from 'src/helpers';
 
-const table = mysqlTable('dictionary', {
+const table = pgTable('dictionary', {
   path: varchar('path', { length: 255 }).primaryKey(),
   parent: varchar('parent', { length: 36 }),
   code: varchar('code', { length: 15 }),
@@ -19,9 +19,10 @@ const table = mysqlTable('dictionary', {
   description: text('description'),
   vaild: boolean('vaild').default(true),
   remark: varchar('remark', { length: 255 }),
-  ...common,
+  ...cols.owners,
+  ...cols.timestamps,
 });
 
-export const dictionary = {
+export const dicts = {
   table,
 };

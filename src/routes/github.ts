@@ -3,10 +3,11 @@ import { validator } from 'hono/validator';
 
 import { isError, isString } from '@busymango/is-esm';
 
-import { decorator, report, session } from 'src/helpers';
+import { report, resHandler, session } from 'src/helpers';
 import { services } from 'src/services';
 
 export const register = (app: Hono) => {
+  const { decorator } = resHandler;
   const { github, users } = services;
 
   /**

@@ -3,11 +3,12 @@ import type { Hono } from 'hono';
 import { setCookie } from 'hono/cookie';
 import { validator } from 'hono/validator';
 
-import { decorator, session } from 'src/helpers';
+import { resHandler, session } from 'src/helpers';
 import { schemas } from 'src/schemas';
 import { services } from 'src/services';
 
 export const register = (app: Hono) => {
+  const { decorator } = resHandler;
   const { users, crypto, github } = services;
   /**
    * github 授权登录、账户登录
