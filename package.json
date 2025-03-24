@@ -3,6 +3,7 @@
   "scripts": {
     "dev": "dotenvx run -- tsx watch src/run.ts",
     "seed": "dotenvx run -- tsx src/seeds/execute.ts",
+    "dev:aws": "dotenvx run -f .env.aws.dev -- tsx watch src/run.ts",
     "test": "dotenvx run -- tsx --test $(find test -type f -name '*.spec.ts')",
     "format": "biome check --write . && biome format --write --colors=force --verbose .",
     "drizzle": "pnpm drizzle-kit generate",
@@ -12,6 +13,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.772.0",
     "@busymango/fetch-driver": "^0.5.0",
     "@hono/node-server": "^1.13.8",
     "ansis": "^3.17.0",
