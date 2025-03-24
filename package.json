@@ -6,7 +6,8 @@
     "test": "dotenvx run -- tsx --test $(find test -type f -name '*.spec.ts')",
     "format": "biome check --write . && biome format --write --colors=force --verbose .",
     "drizzle": "pnpm drizzle-kit generate",
-    "encrypt": "pnpm dotenvx encrypt",
+    "env:encrypt": "pnpm dotenvx encrypt",
+    "env:audit": "tsx scripts/@audit.ts",
     "prepare": "husky"
   },
   "type": "module",

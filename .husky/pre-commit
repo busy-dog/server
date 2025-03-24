@@ -1,2 +1,2 @@
-pnpm encrypt
+pnpm env:audit
 pnpm format
