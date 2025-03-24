@@ -8,6 +8,8 @@ export interface IEnv {
   /** AES 密钥 */
   AES_KEY: string;
 
+  /** POSTGRESQL(public) 是否启用SSL */
+  POSTGRESQL_SSL?: string;
   /** POSTGRESQL(public) 用户 */
   POSTGRESQL_USER: string;
   /** POSTGRESQL(public) 地址 */
@@ -19,8 +21,16 @@ export interface IEnv {
   /** POSTGRESQL(public) 数据库 */
   POSTGRESQL_DATABASE: string;
 
+  /** REDIS(public) 是否启用TLS */
+  REDIS_TLS?: string;
   /** REDIS(public) 地址 */
   REDIS_HOST: string;
+  /** REDIS(public) 端口 */
+  REDIS_PORT?: string;
+  /** REDIS(public) 密码 */
+  REDIS_PASSWORD?: string;
+  /** REDIS(public) 集群 */
+  REDIS_CLUSTER?: string;
 
   /** Google 客户端ID */
   GOOGLE_CLIENT_ID: string;

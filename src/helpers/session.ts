@@ -1,12 +1,12 @@
 import type { Context } from 'hono';
 import { getCookie } from 'hono/cookie';
 
-import { isString } from '@busymango/is-esm';
-import { parse } from '@busymango/utils';
+import { isString } from 'remeda';
 
 import { COOKIE_PRIFIX, COOKIE_SESSION_NAME } from 'src/constants';
 import { redis } from 'src/databases';
 import type { GithubAuthorize } from 'src/services';
+import { safe } from 'src/utils';
 
 export interface SessionValue extends GithubAuthorize {
   id: string; // 用户ID
@@ -23,7 +23,7 @@ export const get = async (ctx: Context | string) => {
   if (!isString(id)) return null;
   const string = await redis[0].get(id);
   if (!isString(string)) return null;
-  return parse.json<SessionValue>(string) ?? null;
+  return (safe(JSON.parse)(string) as SessionValue) ?? null;
 };
 
 export const set = async (ctx: Context | string, value: SessionValue) => {

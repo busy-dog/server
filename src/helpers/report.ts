@@ -1,10 +1,11 @@
+import { isError, isPlainObject } from 'remeda';
 
-import { type PlainObject, isError, isPlainObject } from '@busymango/is-esm';
-import { compact } from '@busymango/utils';
 import { hex } from 'ansis';
 import dayjs from 'dayjs';
 
 import { DateFormatEn, colors } from 'src/constants';
+import type { PlainObject } from 'src/utils';
+import { compact } from 'src/utils';
 
 function time(code?: string): string {
   const text = dayjs().format(DateFormatEn.DateSec);
@@ -42,9 +43,12 @@ export const info = (
   );
 };
 
-export const warn = (error: Error, params: {
-  name?: string;
-} = {},): void => {
+export const warn = (
+  error: Error,
+  params: {
+    name?: string;
+  } = {},
+): void => {
   const { name, message, stack } = error;
   console.error(
     time(colors.amber),
@@ -70,7 +74,7 @@ export const error = (
   }
 };
 
-export const sql = (query: string, params: unknown[]): void => {
+export const sql = (query: string, _: unknown[]): void => {
   console.info(
     time(colors.violet),
     hex(colors.violet)('[sql]'),

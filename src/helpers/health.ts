@@ -1,17 +1,18 @@
+import { isNumber } from 'remeda';
+
 import { db, redis } from 'src/databases';
 
-import { isNumber } from '@busymango/is-esm';
 import * as report from './report';
 
 export async function iRedisChecker() {
   try {
     const val = JSON.stringify(true);
-    const res = await redis[0].get('health');
-    if (res !== val) {
+    const isHealth = await redis[0].get('isHealth');
+    if (isHealth !== val) {
       report.warn(new Error('Redis health checker is expired'));
     }
     const expire = 3600 * 3 + 60; // 3 hours 60 seconds
-    await redis[0].set('health', val, 'EX', expire);
+    await redis[0].set('isHealth', val, 'EX', expire);
     report.info('Redis connection is healthy');
   } catch (error) {
     report.error(error, { name: 'Error during Redis health check' });
@@ -27,6 +28,6 @@ export async function iPostgresqlChecker() {
     }
     report.info('Postgresql connection is healthy');
   } catch (error) {
-    report.error(error, { name: 'Error during Postgresql health check' });
+    report.error(error, { name: 'Postgresql health check failed' });
   }
 }

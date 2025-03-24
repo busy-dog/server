@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { isError } from '@busymango/is-esm';
+import { isError } from 'remeda';
 
 import { db, destroy } from 'src/databases';
 import { report } from 'src/helpers';

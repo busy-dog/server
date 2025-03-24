@@ -1,5 +1,5 @@
-import { isError } from '@busymango/is-esm';
-import { assign, ifnot } from '@busymango/utils';
+import { isError, merge } from 'remeda';
+import { ensure } from 'src/utils';
 
 export const decorator = <T>(
   data: T,
@@ -11,19 +11,14 @@ export const decorator = <T>(
     message?: string;
   } = {},
 ) =>
-  assign<{
-    code?: number;
-    data?: T | null;
-    message?: string;
-    success: boolean;
-  }>(
+  merge(
     {
       code,
       data: null,
       success: false,
-      message: message ?? ifnot(isError(data) && data.message),
+      message: message ?? ensure(isError(data) && data.message),
     },
-    ifnot(
+    ensure(
       !isError(data) && {
         data,
         code: 0,

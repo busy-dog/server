@@ -1,7 +1,7 @@
 import type { Hono } from 'hono';
 import { validator } from 'hono/validator';
 
-import { isError, isString } from '@busymango/is-esm';
+import { isError, isString } from 'remeda';
 
 import { report, resHandler, session } from 'src/helpers';
 import { services } from 'src/services';

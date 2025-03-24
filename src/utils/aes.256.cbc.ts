@@ -1,5 +1,6 @@
-import { isUint8Array } from '@busymango/is-esm';
 import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+
+import { isUint8Array } from 'src/utils';
 
 export const decode = (encrypted: string) => {
   const { AES_KEY } = process.env;

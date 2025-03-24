@@ -6,16 +6,14 @@
     "test": "dotenvx run -- tsx --test $(find test -type f -name '*.spec.ts')",
     "format": "biome check --write . && biome format --write --colors=force --verbose .",
     "drizzle": "pnpm drizzle-kit generate",
-    "encrypt": "pnpm dotenvx encrypt"
+    "encrypt": "pnpm dotenvx encrypt",
+    "prepare": "husky"
   },
   "type": "module",
   "dependencies": {
-    "@busymango/fetch-driver": "^0.4.1",
-    "@busymango/is-esm": "^0.2.3",
-    "@busymango/utils": "^0.2.4",
+    "@busymango/fetch-driver": "^0.5.0",
     "@hono/node-server": "^1.13.8",
     "ansis": "^3.17.0",
-    "change-case": "^5.4.4",
     "cron": "^4.1.0",
     "dayjs": "^1.11.13",
     "drizzle-orm": "^0.40.0",
@@ -40,7 +38,9 @@
     "drizzle-kit": "^0.30.5",
     "drizzle-seed": "^0.3.1",
     "globals": "^15.8.0",
+    "husky": "^9.1.7",
     "tsx": "^4.19.3",
+    "type-fest": "^4.37.0",
     "typescript": "^5.8.2"
   }
 }

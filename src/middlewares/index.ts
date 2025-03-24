@@ -1,8 +1,8 @@
 import { getCookie, setCookie } from 'hono/cookie';
 import { createMiddleware } from 'hono/factory';
-import { nanoid } from 'nanoid';
 
-import { isString } from '@busymango/is-esm';
+import { nanoid } from 'nanoid';
+import { isString } from 'remeda';
 
 import { colors } from 'src/constants';
 import { report, session } from 'src/helpers';

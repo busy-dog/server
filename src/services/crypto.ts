@@ -1,8 +1,8 @@
 import type { Context } from 'hono';
 import { sign } from 'hono/jwt';
 
-import { isString } from '@busymango/is-esm';
 import { randomBytes } from 'crypto';
+import { isString } from 'remeda';
 
 import { redis } from 'src/databases';
 import { session } from 'src/helpers';

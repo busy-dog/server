@@ -1,6 +1,6 @@
 import type { DriveContext, DriveReport } from '@busymango/fetch-driver';
 import Driver, { fetch2curl } from '@busymango/fetch-driver';
-import { compact } from '@busymango/utils';
+import { compact } from 'src/utils';
 
 import * as report from './report';
 

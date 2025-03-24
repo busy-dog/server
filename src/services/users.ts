@@ -1,12 +1,13 @@
 import { v7 } from 'uuid';
 
-import { isEmpty, isNil, isNumber, isString } from '@busymango/is-esm';
-import { compact } from '@busymango/utils';
+import { isNullish, isNumber, isString } from 'remeda';
+
 import { eq, or } from 'drizzle-orm';
 
 import { db } from 'src/databases';
 import type { UserInsertModel, UserSelectModel } from 'src/schemas';
 import { schemas } from 'src/schemas';
+import { compact, isEmptyValue } from 'src/utils';
 
 import type { GithubUserInfo } from './github';
 
@@ -57,7 +58,7 @@ export const info = async (
 
   const entries = Object.entries(selector) as Entry[];
 
-  if (isEmpty(entries)) {
+  if (isEmptyValue(entries)) {
     throw new Error('No user info provided');
   }
 
@@ -100,7 +101,7 @@ export const create = async ({
       };
   })();
 
-  if (isNil(value)) {
+  if (isNullish(value)) {
     throw new Error('No user info provided');
   }
   return common.insert(table).values(value);

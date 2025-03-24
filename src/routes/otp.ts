@@ -1,8 +1,8 @@
 import type { Context, Hono } from 'hono';
 import { validator } from 'hono/validator';
 
-import { isNil, isString } from '@busymango/is-esm';
 import { authenticator } from 'otplib';
+import { isNullish, isString } from 'remeda';
 
 import { SERVER_NAME } from 'src/constants';
 import { report, resHandler, session } from 'src/helpers';
@@ -38,7 +38,7 @@ export const register = (app: Hono) => {
       const { id } = (await session.get(ctx)) ?? {};
       const error = new Error('No user with that email exists');
 
-      if (isNil(id)) {
+      if (isNullish(id)) {
         return json(decorator(error), 401);
       }
 
@@ -78,7 +78,7 @@ export const register = (app: Hono) => {
         ctx,
         async ({ otpEnabled, otpSecret, otpVerified }) => {
           if (otpEnabled !== true) throw new Error('OTP is not enabled');
-          if (isNil(otpSecret)) throw new Error('OTP secret is not set');
+          if (isNullish(otpSecret)) throw new Error('OTP secret is not set');
           const delta = authenticator.verify({ token, secret: otpSecret });
           if (delta !== true) throw new Error('OTP token is invalid');
           if (!otpVerified) await users.update(id, { otpVerified: true });

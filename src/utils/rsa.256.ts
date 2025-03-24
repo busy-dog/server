@@ -1,6 +1,7 @@
-import { isNil, isString } from '@busymango/is-esm';
 import type { KeyPairSyncResult } from 'crypto';
 import { generateKeyPairSync } from 'crypto';
+
+import { isNullish, isString } from 'remeda';
 
 import { regexs } from 'src/constants';
 import { redis } from 'src/databases';
@@ -30,7 +31,7 @@ export const keypair = () => {
     const res = parse<RSAKeyPair>(await redis[0].get(key));
 
     if (
-      !isNil(res) &&
+      !isNullish(res) &&
       RSA_PUBLIC_KEY.test(res.publicKey) &&
       RSA_PRIVATE_KEY.test(res.privateKey)
     ) {

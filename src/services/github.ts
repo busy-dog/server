@@ -1,10 +1,10 @@
 import type { Context } from 'hono';
 import { getCookie } from 'hono/cookie';
 
-import { isString } from '@busymango/is-esm';
-import { iSearchParams } from '@busymango/utils';
+import { isString } from 'remeda';
+
 import { drive, drives, session } from 'src/helpers';
-import { changeCase } from 'src/utils';
+import { iSearchParams, toSnakeCaseKeys } from 'src/utils';
 
 const host = 'https://github.com';
 
@@ -128,7 +128,7 @@ export const token = async (code: string) => {
   const api = '/login/oauth/access_token';
   const data = await drive.post<GithubAuthorize>(
     `${host}${api}`,
-    changeCase({
+    toSnakeCaseKeys({
       code,
       clientId: GITHUB_CLIENT_ID,
       clientSecret: GITHUB_CLIENT_SECRET,
@@ -159,7 +159,7 @@ export const authorize = async (
   return [
     `${host}/login/oauth/authorize`,
     iSearchParams(
-      changeCase({
+      toSnakeCaseKeys({
         // redirectUri: redirect,
         clientId: GITHUB_CLIENT_ID,
         state: getCookie(ctx, session.name),
