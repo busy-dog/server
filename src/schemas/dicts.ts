@@ -1,10 +1,4 @@
-import {
-  boolean,
-  pgTable,
-  smallint,
-  text,
-  varchar,
-} from 'drizzle-orm/pg-core';
+import { boolean, pgTable, smallint, text, varchar } from 'drizzle-orm/pg-core';
 
 import { cols } from 'src/helpers';
 
