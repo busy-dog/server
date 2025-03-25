@@ -1,5 +1,5 @@
 import type { Context } from 'hono';
-import { sign } from 'hono/jwt';
+import { sign, verify } from 'hono/jwt';
 
 import { randomBytes } from 'crypto';
 import { isString } from 'remeda';
@@ -52,3 +52,24 @@ export const token = async (
     await secret(),
     'ES256',
   );
+
+  
+/**
+ * 生成 JWT token
+ * @param ctx 上下文
+ * @param expires 过期时间
+ * @returns JWT token
+ */
+export const isVaildJwt = async (
+  jwt?: string,
+) => {
+  if (isString(jwt)) {
+    try {
+      const key = await secret();
+      await verify(jwt, key, 'ES256');
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+}

@@ -1,0 +1,10 @@
+[core]
+  # 设置大小写敏感
+  ignorecase = false
+  # 行尾符设置
+  autocrlf = false
+  eol = lf
+
+[pull]
+  # 设置 pull 使用 rebase
+  rebase = true

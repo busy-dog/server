@@ -12,8 +12,8 @@ importers:
         specifier: ^0.5.0
         version: 0.5.0(mime@4.0.6)(remeda@2.21.1)
       '@hono/node-server':
-        specifier: ^1.13.8
-        version: 1.13.8(hono@4.7.4)
+        specifier: ^1.14.0
+        version: 1.14.0(hono@4.7.5)
       ansis:
         specifier: ^3.17.0
         version: 3.17.0
@@ -24,20 +24,17 @@ importers:
         specifier: ^1.11.13
         version: 1.11.13
       drizzle-orm:
-        specifier: ^0.40.0
-        version: 0.40.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0)
+        specifier: ^0.41.0
+        version: 0.41.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0)
       drizzle-zod:
         specifier: ^0.7.0
-        version: 0.7.0(drizzle-orm@0.40.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0))(zod@3.24.2)
-      eciesjs:
-        specifier: ^0.4.13
-        version: 0.4.13
+        version: 0.7.0(drizzle-orm@0.41.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0))(zod@3.24.2)
       googleapis:
         specifier: ^144.0.0
         version: 144.0.0
       hono:
-        specifier: ^4.7.4
-        version: 4.7.4
+        specifier: ^4.7.5
+        version: 4.7.5
       ioredis:
         specifier: ^5.6.0
         version: 5.6.0
@@ -75,15 +72,15 @@ importers:
       '@types/pg':
         specifier: ^8.11.11
         version: 8.11.11
+      commander:
+        specifier: ^13.1.0
+        version: 13.1.0
       drizzle-kit:
         specifier: ^0.30.5
         version: 0.30.5
       drizzle-seed:
         specifier: ^0.3.1
-        version: 0.3.1(drizzle-orm@0.40.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0))
-      globals:
-        specifier: ^15.8.0
-        version: 15.14.0
+        version: 0.3.1(drizzle-orm@0.41.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0))
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -603,8 +600,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@hono/node-server@1.13.8':
-    resolution: {integrity: sha512-fsn8ucecsAXUoVxrUil0m13kOEq4mkX4/4QozCqmY+HpGfKl74OYSn8JcMA8GnG0ClfdRI4/ZSeG7zhFaVg+wg==}
+  '@hono/node-server@1.14.0':
+    resolution: {integrity: sha512-YUCxJwgHRKSqjrdTk9e4VMGKN27MK5r4+MGPyZTgKH+IYbK+KtYbHeOcPGJ91KGGD6RIQiz2dAHxvjauNhOS8g==}
     engines: {node: '>=18.14.1'}
     peerDependencies:
       hono: ^4
@@ -691,6 +688,10 @@ packages:
     resolution: {integrity: sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ==}
     engines: {node: '>=16'}
 
+  commander@13.1.0:
+    resolution: {integrity: sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==}
+    engines: {node: '>=18'}
+
   cron@4.1.0:
     resolution: {integrity: sha512-wmcuXr2qP0UZStYgwruG6jC2AYSO9n5VMm2t93hmcEXEjWY3S2bsXe3sfGUrTs/uQ1AvRCrZ0Pp9Q032L/V9tw==}
     engines: {node: '>=18.x'}
@@ -723,8 +724,8 @@ packages:
     resolution: {integrity: sha512-l6dMSE100u7sDaTbLczibrQZjA35jLsHNqIV+jmhNVO3O8jzM6kywMOmV9uOz9ZVSCMPQhAZEFjL/qDPVrqpUA==}
     hasBin: true
 
-  drizzle-orm@0.40.0:
-    resolution: {integrity: sha512-7ptk/HQiMSrEZHnAsSlBESXWj52VwgMmyTEfoNmpNN2ZXpcz13LwHfXTIghsAEud7Z5UJhDOp8U07ujcqme7wg==}
+  drizzle-orm@0.41.0:
+    resolution: {integrity: sha512-7A4ZxhHk9gdlXmTdPj/lREtP+3u8KvZ4yEN6MYVxBzZGex5Wtdc+CWSbu7btgF6TB0N+MNPrvW7RKBbxJchs/Q==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -927,10 +928,6 @@ packages:
   get-tsconfig@4.8.1:
     resolution: {integrity: sha512-k9PN+cFBmaLWtVz29SkUoqU5O0slLuHJXt/2P+tMVFT+phsSGXGkp9t3rQIqdz0e+06EHNGs3oM6ZX1s2zHxRg==}
 
-  globals@15.14.0:
-    resolution: {integrity: sha512-OkToC372DtlQeje9/zHIo5CT8lRP/FUgEOKBEhU4e0abL7J7CD24fD9ohiLN5hagG/kWCYj4K5oaxxtj2Z0Dig==}
-    engines: {node: '>=18'}
-
   google-auth-library@9.15.1:
     resolution: {integrity: sha512-Jb6Z0+nvECVz+2lzSMt9u98UsoakXxA2HGHMCxh+so3n90XgYWkq5dur19JAJV7ONiJY22yBTyJB1TSkvPq9Ng==}
     engines: {node: '>=14'}
@@ -959,8 +956,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hono@4.7.4:
-    resolution: {integrity: sha512-Pst8FuGqz3L7tFF+u9Pu70eI0xa5S3LPUmrNd5Jm8nTHze9FxLTK9Kaj5g/k4UcwuJSXTP65SyHOPLrffpcAJg==}
+  hono@4.7.5:
+    resolution: {integrity: sha512-fDOK5W2C1vZACsgLONigdZTRZxuBqFtcKh7bUQ5cVSbwI2RWjloJDcgFOVzbQrlI6pCmhlTsVYZ7zpLj4m4qMQ==}
     engines: {node: '>=16.9.0'}
 
   https-proxy-agent@7.0.6:
@@ -1606,9 +1603,9 @@ snapshots:
   '@esbuild/win32-x64@0.25.1':
     optional: true
 
-  '@hono/node-server@1.13.8(hono@4.7.4)':
+  '@hono/node-server@1.14.0(hono@4.7.5)':
     dependencies:
-      hono: 4.7.4
+      hono: 4.7.5
 
   '@ioredis/commands@1.2.0': {}
 
@@ -1686,6 +1683,8 @@ snapshots:
 
   commander@11.1.0: {}
 
+  commander@13.1.0: {}
+
   cron@4.1.0:
     dependencies:
       '@types/luxon': 3.4.2
@@ -1717,22 +1716,22 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.40.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0):
+  drizzle-orm@0.41.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0):
     optionalDependencies:
       '@types/pg': 8.11.11
       gel: 2.0.1
       mysql2: 3.12.0
       pg: 8.14.0
 
-  drizzle-seed@0.3.1(drizzle-orm@0.40.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0)):
+  drizzle-seed@0.3.1(drizzle-orm@0.41.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0)):
     dependencies:
       pure-rand: 6.1.0
     optionalDependencies:
-      drizzle-orm: 0.40.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0)
+      drizzle-orm: 0.41.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0)
 
-  drizzle-zod@0.7.0(drizzle-orm@0.40.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0))(zod@3.24.2):
+  drizzle-zod@0.7.0(drizzle-orm@0.41.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0))(zod@3.24.2):
     dependencies:
-      drizzle-orm: 0.40.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0)
+      drizzle-orm: 0.41.0(@types/pg@8.11.11)(gel@2.0.1)(mysql2@3.12.0)(pg@8.14.0)
       zod: 3.24.2
 
   dunder-proto@1.0.1:
@@ -1930,8 +1929,6 @@ snapshots:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
-  globals@15.14.0: {}
-
   google-auth-library@9.15.1:
     dependencies:
       base64-js: 1.5.1
@@ -1980,7 +1977,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.7.4: {}
+  hono@4.7.5: {}
 
   https-proxy-agent@7.0.6:
     dependencies:
