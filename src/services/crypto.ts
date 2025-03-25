@@ -53,16 +53,13 @@ export const token = async (
     'ES256',
   );
 
-  
 /**
  * 生成 JWT token
  * @param ctx 上下文
  * @param expires 过期时间
  * @returns JWT token
  */
-export const isVaildJwt = async (
-  jwt?: string,
-) => {
+export const isVaildJwt = async (jwt?: string) => {
   if (isString(jwt)) {
     try {
       const key = await secret();
@@ -72,4 +69,4 @@ export const isVaildJwt = async (
       return false;
     }
   }
-}
+};

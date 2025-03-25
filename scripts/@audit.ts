@@ -2,9 +2,7 @@
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import { config, parse } from '@dotenvx/dotenvx';
-
-config({ ignore: ['MISSING_PRIVATE_KEY'], DOTENV_KEY: 'null' });
+import { parse } from '@dotenvx/dotenvx';
 
 const { PWD, INIT_CWD } = process.env;
 const cwd = process.cwd() ?? INIT_CWD ?? PWD;
