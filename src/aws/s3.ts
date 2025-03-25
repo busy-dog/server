@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
-import type { ReadStream } from 'node:fs';
+import type { Readable } from 'node:stream';
 
-import { S3 } from '@aws-sdk/client-s3';
+import { S3, ServerSideEncryption } from '@aws-sdk/client-s3';
 
 import { toPascalCaseKeys } from 'src/utils';
 
@@ -10,7 +10,7 @@ const s3 = new S3({
 });
 
 export const put = async (
-  body: ReadStream,
+  body: Readable | Buffer,
   {
     bucket,
   }: {
@@ -24,6 +24,7 @@ export const put = async (
       key,
       body,
       bucket,
+      serverSideEncryption: ServerSideEncryption.AES256,
     }),
   );
 

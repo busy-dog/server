@@ -41,6 +41,9 @@ export interface IEnv {
   GITHUB_CLIENT_ID: string;
   /** Github mango 密钥 */
   GITHUB_CLIENT_SECRET: string;
+
+  /** AWS S3 桶 */
+  AWS_S3_BUCKET?: string;
 }
 
 /** 拓展`global`属性 */
