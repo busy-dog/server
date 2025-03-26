@@ -6,8 +6,8 @@
     "zeabur:dev": "dotenvx run -f .env.zeabur.dev -- tsx watch src/run.ts",
     "test": "dotenvx run -- tsx --test $(find test -type f -name '*.spec.ts')",
     "format": "biome check --write . && biome format --write --colors=force --verbose .",
-    "drizzle:generate": "pnpm drizzle-kit generate",
-    "drizzle:migrate": "pnpm drizzle-kit migrate",
+    "drizzle:generate": "tsx scripts/@drizzle.ts -c generate",
+    "drizzle:migrate": "tsx scripts/@drizzle.ts -c migrate",
     "env:encrypt": "tsx scripts/@encrypt.ts",
     "env:audit": "tsx scripts/@audit.ts",
     "prepare": "husky"

@@ -1,7 +1,4 @@
-import { config } from '@dotenvx/dotenvx';
 import { defineConfig } from 'drizzle-kit';
-
-config({ envKeysFile: '.env.keys', path: '.env.zeabur.dev', overload: true });
 
 const {
   POSTGRESQL_SSL,
@@ -22,7 +19,12 @@ export default defineConfig({
     port: Number(POSTGRESQL_PORT),
     password: POSTGRESQL_PASSWORD,
     database: POSTGRESQL_DATABASE,
-    ssl: POSTGRESQL_SSL === 'true',
+    ssl:
+      POSTGRESQL_SSL === 'true'
+        ? {
+            rejectUnauthorized: false,
+          }
+        : undefined,
   },
   // migrations: {
   //   table: 'my-migrations-table', // `__drizzle_migrations` by default
