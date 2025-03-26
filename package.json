@@ -8,7 +8,7 @@
     "format": "biome check --write . && biome format --write --colors=force --verbose .",
     "drizzle:generate": "pnpm drizzle-kit generate",
     "drizzle:migrate": "pnpm drizzle-kit migrate",
-    "env:encrypt": "pnpm dotenvx encrypt",
+    "env:encrypt": "tsx scripts/@encrypt.ts",
     "env:audit": "tsx scripts/@audit.ts",
     "prepare": "husky"
   },
