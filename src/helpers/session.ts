@@ -28,7 +28,8 @@ export const get = async (ctx: Context | string) => {
 
 export const set = async (ctx: Context | string, value: SessionValue) => {
   const id = over(ctx);
-  return id ? await redis[0].set(id, JSON.stringify(value)) : null;
+  const ex = 60 * 60 * 24 * 30; // 30 days
+  return id ? await redis[0].set(id, JSON.stringify(value), 'EX', ex) : null;
 };
 
 export const clear = async (ctx: Context | string) => {

@@ -5,18 +5,28 @@ import { isNullish, isNumber, isString } from 'remeda';
 import { eq, or } from 'drizzle-orm';
 
 import { db } from 'src/databases';
-import type { UserInsertModel, UserSelectModel } from 'src/schemas';
+import type {
+  UserInfoModel,
+  UserInsertModel,
+  UserSelectModel,
+} from 'src/schemas';
 import { schemas } from 'src/schemas';
-import { compact, isEmptyValue } from 'src/utils';
+import { compact } from 'src/utils';
 
 import type { GithubUserInfo } from './github';
 
 type Scalar = string | number;
 
-type UserKeys = keyof UserSelectModel;
+// type UserKeys = keyof UserSelectModel;
 
 const isScalar = (value: unknown): value is Scalar =>
   isString(value) || isNumber(value);
+
+const info = () => {
+  const { common } = db;
+  const { table } = schemas.users;
+  return common.select().from(table);
+};
 
 export const exist = async ({
   id,
@@ -46,35 +56,26 @@ export const exist = async ({
   return rows.length > 0;
 };
 
-export const info = async (
-  selector: Pick<
-    UserSelectModel,
-    'id' | 'email' | 'mobile' | 'githubId' | 'googleId'
-  >,
+export const query = async (
+  selector: (
+    instance: ReturnType<typeof info>,
+    table: typeof schemas.users.table,
+  ) => Promise<UserInfoModel[]>,
 ) => {
-  const { common } = db;
   const { table } = schemas.users;
-  type Entry = [UserKeys, Scalar];
+  const rows = await selector(info(), table);
 
-  const entries = Object.entries(selector) as Entry[];
-
-  if (isEmptyValue(entries)) {
-    throw new Error('No user info provided');
-  }
-
-  const rows = await common
-    .select()
-    .from(table)
-    .where(or(...compact(entries.map(([k, v]) => eq(table[k], v.toString())))));
-
-  if (rows.length === 0) {
-    throw new Error('No user info provided');
-  }
   if (rows.length > 1) {
     throw new Error('Multiple users found');
   }
+  if (rows.length === 0 || isNullish(rows[0])) {
+    throw new Error('No user info provided');
+  }
   return rows[0];
 };
+
+export const queryById = async (id: string) =>
+  query((instance, table) => instance.where(eq(table.id, id)));
 
 export const create = async ({
   row,

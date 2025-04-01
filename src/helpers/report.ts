@@ -16,7 +16,7 @@ export const info = (
   text: string,
   {
     directory,
-    name = 'server',
+    name = 'Server',
     color = colors.aqua,
   }: {
     color?: string;
@@ -44,18 +44,27 @@ export const info = (
 };
 
 export const warn = (
-  error: Error,
+  data: Error | string,
   params: {
     name?: string;
   } = {},
 ): void => {
-  const { name, message, stack } = error;
-  console.error(
-    time(colors.amber),
-    hex(colors.amber)(`[${params.name ?? name}]`),
-    hex(colors.amber)(message),
-    hex(colors.amber)(stack?.toString()),
-  );
+  if (isError(data)) {
+    const { message } = data;
+    const name = params.name ?? data.name;
+    console.warn(
+      time(colors.amber),
+      hex(colors.amber)(`[${name}]`),
+      hex(colors.amber)(message),
+    );
+  } else {
+    const name = params.name ?? 'Warn';
+    console.warn(
+      time(colors.amber),
+      hex(colors.amber)(`[${name}]`),
+      hex(colors.amber)(data),
+    );
+  }
 };
 
 export const error = (
@@ -77,7 +86,7 @@ export const error = (
 export const sql = (query: string, _: unknown[]): void => {
   console.info(
     time(colors.violet),
-    hex(colors.violet)('[sql]'),
+    hex(colors.violet)('[SQL]'),
     hex(colors.violet)(query),
     // '\n\t' + hex(colors.violet)(format(query, params)),
   );

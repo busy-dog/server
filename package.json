@@ -2,8 +2,7 @@
   "name": "@busymango/server",
   "scripts": {
     "dev": "dotenvx run -- tsx watch src/run.ts",
-    "seed": "dotenvx run -- tsx src/seeds/execute.ts",
-    "zeabur:dev": "dotenvx run -f .env.zeabur.dev -- tsx watch src/run.ts",
+    "dev:zeabur": "dotenvx run -f .env.zeabur.dev -- tsx watch src/run.ts",
     "test": "dotenvx run -- tsx --test $(find test -type f -name '*.spec.ts')",
     "format": "biome check --write . && biome format --write --colors=force --verbose .",
     "drizzle:generate": "tsx scripts/@drizzle.ts -c generate",
@@ -29,6 +28,7 @@
     "otplib": "^12.0.1",
     "pg": "^8.14.0",
     "remeda": "^2.21.1",
+    "resend": "^4.2.0",
     "uuid": "^11.0.5",
     "zod": "^3.24.2"
   },

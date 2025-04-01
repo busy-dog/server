@@ -126,23 +126,26 @@ export interface GithubAuthorize extends GithubErrorModel {
 export const token = async (code: string) => {
   const host = 'https://github.com';
   const api = '/login/oauth/access_token';
-  const data = await drive.post<GithubAuthorize>(
-    `${host}${api}`,
-    toSnakeCaseKeys({
-      code,
-      clientId: GITHUB_CLIENT_ID,
-      clientSecret: GITHUB_CLIENT_SECRET,
-    }),
-    { headers: [['Accept', 'application/json']] },
-  );
-
-  if (isString(data)) {
-    throw new Error('GitHub OAuth error:' + data);
+  try {
+    const data = await drive.post<GithubAuthorize>(
+      `${host}${api}`,
+      toSnakeCaseKeys({
+        code,
+        clientId: GITHUB_CLIENT_ID,
+        clientSecret: GITHUB_CLIENT_SECRET,
+      }),
+      { headers: [['Accept', 'application/json']] },
+    );
+    if (isString(data)) {
+      throw new Error(data);
+    }
+    if (data.error) {
+      throw new Error(data.error_description);
+    }
+    return data;
+  } catch (error) {
+    throw new Error('GitHub OAuth error:' + error);
   }
-  if (data.error) {
-    throw new Error('GitHub OAuth error:' + data.error_description);
-  }
-  return data;
 };
 
 /**

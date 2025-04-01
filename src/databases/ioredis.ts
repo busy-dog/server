@@ -21,16 +21,21 @@ const {
 
 const tls = ensure(isTLS === 'true' && { rejectUnauthorized: false });
 
+const retryStrategy = (times: number) => {
+  return Math.min(times * 50, 2000);
+};
+
 export const redis = compact([
   isString(cluster) &&
     new Redis.Cluster([{ host: cluster, port: Number(port) }], {
+      redisOptions: { tls },
       // 启用准备检查
       enableReadyCheck: true,
       // 槽位刷新超时
       slotsRefreshTimeout: 2000,
       enableAutoPipelining: true,
       dnsLookup: (arg, cb) => cb(null, arg),
-      redisOptions: { tls },
+      clusterRetryStrategy: retryStrategy,
     }),
   !isString(cluster) &&
     new Redis({
@@ -41,5 +46,6 @@ export const redis = compact([
       port: Number(port),
       enableReadyCheck: true,
       enableAutoPipelining: true,
+      retryStrategy,
     }),
 ]);

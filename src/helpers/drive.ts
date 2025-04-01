@@ -7,7 +7,7 @@ import * as report from './report';
 class IDriveReport implements DriveReport {
   beforeFetch(context: DriveContext) {
     const { api, options } = context;
-    report.info('\n\t' + fetch2curl(api, options), { name: 'driver' });
+    report.info('\u0020' + fetch2curl(api, options), { name: 'driver' });
   }
   afterFetch(context: DriveContext) {
     const { api, response, options, body } = context;

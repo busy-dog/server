@@ -5,14 +5,13 @@ import { authenticator } from 'otplib';
 import { isNullish, isString } from 'remeda';
 
 import { SERVER_NAME } from 'src/constants';
-import { report, resHandler, session } from 'src/helpers';
+import { decorator, report, session } from 'src/helpers';
 import type { UserInfoModel } from 'src/schemas';
 import { services } from 'src/services';
 
 export const register = (app: Hono) => {
   const issuer = SERVER_NAME;
   const { users } = services;
-  const { decorator } = resHandler;
   const handler = async <T>(
     id: string,
     ctx: Context,
@@ -20,8 +19,9 @@ export const register = (app: Hono) => {
   ) => {
     const { json } = ctx;
     try {
-      const res = await func(await users.info({ id }));
-      return json(decorator(res ?? (await users.info({ id }))));
+      const info = await users.queryById(id);
+      const res = (await func(info)) ?? info;
+      return json(decorator(res));
     } catch (error) {
       report.error(error);
       return json(decorator(error));
@@ -82,7 +82,7 @@ export const register = (app: Hono) => {
           const delta = authenticator.verify({ token, secret: otpSecret });
           if (delta !== true) throw new Error('OTP token is invalid');
           if (!otpVerified) await users.update(id, { otpVerified: true });
-          return json(decorator(await users.info({ id })));
+          return json(decorator(await users.queryById(id)));
         },
       );
     },
@@ -93,7 +93,7 @@ export const register = (app: Hono) => {
     const { id } = ctx.req.valid('cookie');
     return await handler(id, ctx, async () => {
       await users.update(id, { otpEnabled: false });
-      return json(decorator(await users.info({ id })));
+      return json(decorator(await users.queryById(id)));
     });
   });
 };

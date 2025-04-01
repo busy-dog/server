@@ -1,13 +1,14 @@
+import { eq } from 'drizzle-orm';
 import type { Hono } from 'hono';
 import { validator } from 'hono/validator';
 
 import { isError, isString } from 'remeda';
 
-import { report, resHandler, session } from 'src/helpers';
+import { decorator, report, session } from 'src/helpers';
 import { services } from 'src/services';
+import { z } from 'zod';
 
 export const register = (app: Hono) => {
-  const { decorator } = resHandler;
   const { github, users } = services;
 
   /**
@@ -16,19 +17,21 @@ export const register = (app: Hono) => {
   app.get(
     '/github/oauth',
     validator('query', (value, ctx) => {
-      const { code, state } = value;
-      if (!isString(code)) {
-        return ctx.json(decorator(new Error('"Code" must be required')), 400);
+      try {
+        const { code, state } = z
+          .object({
+            code: z.string({
+              required_error: '"Code" must be required',
+            }),
+            state: z.string({
+              required_error: '"State" must be required',
+            }),
+          })
+          .parse(value);
+        return { code, state };
+      } catch (error) {
+        return ctx.json(decorator(error), 400);
       }
-      if (!isString(state)) {
-        return ctx.json(
-          decorator(
-            new Error('"State" must be required, Plz check `github.signin`'),
-          ),
-          400,
-        );
-      }
-      return { code, state };
     }),
     async ({ req, redirect }) => {
       try {
@@ -52,7 +55,9 @@ export const register = (app: Hono) => {
         }
 
         const { state } = req.valid('query');
-        const { id } = await users.info({ githubId });
+        const { id } = await users.query((instance, table) =>
+          instance.where(eq(table.githubId, githubId)),
+        );
         await session.set(state, { ...res, id });
         return redirect('http://127.0.0.1:8080');
       } catch (error) {

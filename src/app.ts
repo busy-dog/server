@@ -4,7 +4,6 @@ import { cors } from 'hono/cors';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-
 import { crons } from './crons';
 import { middlewares } from './middlewares';
 import { register } from './routes';
@@ -30,8 +29,8 @@ export const app = register(
           exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
         }),
       )
+      .use('*', middlewares.iLogger())
       .use('*', middlewares.iAuth())
-      .use('*', middlewares.iSessionHandler())
-      .use('*', middlewares.iRequestsLogger()),
+      .use('*', middlewares.iSessionHandler()),
   ),
 );

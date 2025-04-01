@@ -41,6 +41,11 @@ export interface IEnv {
   GITHUB_CLIENT_ID: string;
   /** Github mango 密钥 */
   GITHUB_CLIENT_SECRET: string;
+
+  /** Resend API Key */
+  RESEND_API_KEY?: string;
+  /** Resend 发件人邮箱 */
+  RESEND_FROM_EMAIL?: string;
 }
 
 /** 拓展`global`属性 */

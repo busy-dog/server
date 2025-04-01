@@ -12,6 +12,7 @@ import { aes } from 'src/utils';
  * 获取 JWT secret
  * 密钥轮换（Rotation）30天
  * 生成新密钥：定期生成一个新的密钥，并保存在 Redis 中。
+ * TODO: 考虑增加secret长度
  * TODO 多密钥共存：保留旧密钥和新密钥一段时间。验证 JWT 时，先尝试使用当前密钥验证，如果失败，则尝试使用旧密钥进行验证。
  */
 export const secret = async () => {
@@ -36,7 +37,7 @@ export const secret = async () => {
  * @param expires 过期时间
  * @returns JWT token
  */
-export const token = async (
+export const jwt = async (
   ctx: Context,
   {
     expires,
@@ -50,7 +51,7 @@ export const token = async (
       exp: expires.getTime() / 1000,
     },
     await secret(),
-    'ES256',
+    'HS256',
   );
 
 /**
@@ -63,7 +64,7 @@ export const isVaildJwt = async (jwt?: string) => {
   if (isString(jwt)) {
     try {
       const key = await secret();
-      await verify(jwt, key, 'ES256');
+      await verify(jwt, key, 'HS256');
       return true;
     } catch (_) {
       return false;

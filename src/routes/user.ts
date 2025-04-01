@@ -7,17 +7,20 @@ import { authenticator } from 'otplib';
 import { isString } from 'remeda';
 import { z } from 'zod';
 
-import { resHandler, session } from 'src/helpers';
+import { eq, or } from 'drizzle-orm';
+import { decorator, session } from 'src/helpers';
+import { middlewares } from 'src/middlewares';
+import { iRateLimit } from 'src/middlewares/limit';
 import { schemas } from 'src/schemas';
 import { services } from 'src/services';
+import { pcrypt } from 'src/utils';
 
 export const register = (app: Hono) => {
-  const { decorator } = resHandler;
-  const { users, crypto, github } = services;
+  const { captcha, users, crypto, github } = services;
   /**
-   * oatuh2 授权登录、账户登录
+   * oatuh2 授权登录
    */
-  app.get('/auth/:method', async (ctx) => {
+  app.get('/oauth2/:method', async (ctx) => {
     const { req, redirect, json } = ctx;
     const method = req.param('method');
     try {
@@ -35,34 +38,54 @@ export const register = (app: Hono) => {
   });
 
   /**
-   * 账户登录
+   * 账户密码登录
+   * SHA-256 + scrypt 双重加密
+   * 随机盐值防止彩虹表攻击
+   * timingSafeEqual 防止时序攻击
+   * 支持多因素认证（MFA）
+   * 使用 rate limiting 防止暴力攻击
+   * JWT 密钥定期轮换（30天）
+   * TODO: 考虑添加密码历史记录，防止重复使用旧密码
+   * TODO: 设备指纹识别 会话并发控制 异常登录检测
+   * TODO: 登录历史记录- 登录尝试（成功/失败）、密码重置
+   * TODO: c.header('X-Frame-Options', 'DENY');
+   * TODO: c.header('X-Content-Type-Options', 'nosniff');
+   * TODO: c.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
    */
   app.post(
     '/signin',
+    middlewares.iRateLimit({
+      quota: 100,
+      window: 10 * 60 * 1000, // 15 minutes
+    }),
     validator('json', async (value, { json }) => {
-      const schema = z.object({
-        mobile: z.string().optional(),
-        email: z.string().email().optional(),
-        password: z.string().min(6).max(20),
-        mfaCode: z.string().optional(),
-      });
-
-      const data = schema.parse(value);
-      const account = data.mobile || data.email;
-
       try {
-        if (!isString(account)) {
-          throw new Error('Account is required');
-        }
-        const info = await users.info({
-          email: data.email,
-          mobile: data.mobile,
-        });
-        if (!info) {
-          return json(decorator(new Error('User not found')), 401);
-        }
+        const data = z
+          .object({
+            mobile: z.string().optional(),
+            mfaCode: z.string().optional(),
+            email: z.string().email().optional(),
+            password: z
+              .string({
+                required_error: '"Password" is required',
+              })
+              .regex(/^[a-f0-9]{64}$/i),
+          })
+          .parse(value);
+
+        const account = data.mobile ?? data.email;
+        if (!isString(account)) throw new Error('"Account" is required');
+
+        const info = await users.query((instance, table) =>
+          instance.where(
+            or(eq(table.email, account), eq(table.mobile, account)),
+          ),
+        );
+        if (!info) throw new Error('User not found');
+
         const { mfaCode: token } = data;
         const { otpSecret: secret, otpEnabled: enabled } = info;
+
         if (enabled && isString(secret)) {
           if (!isString(token)) {
             throw new Error('MFA code is required');
@@ -72,8 +95,11 @@ export const register = (app: Hono) => {
             throw new Error('Invalid MFA code');
           }
         }
-        if (info.password !== data.password) {
-          return json(decorator(new Error('Invalid password')), 401);
+        if (!isString(info.password)) {
+          throw new Error('Password is not set');
+        }
+        if (!pcrypt.compare(data.password, info.password)) {
+          throw new Error('Invalid password');
         }
         return info;
       } catch (error) {
@@ -81,11 +107,15 @@ export const register = (app: Hono) => {
       }
     }),
     async (ctx) => {
-      const userinfo = await ctx.req.valid('json');
-      const expires = dayjs().add(30, 'day').toDate(); // 30 天
-      const token = await crypto.token(ctx, { expires });
-      setCookie(ctx, 'token', token, { expires }); // 设置 cookie
-      return ctx.json(decorator({ token, userinfo }));
+      try {
+        const userinfo = await ctx.req.valid('json');
+        const expires = dayjs().add(30, 'day').toDate(); // 30 天
+        const token = await crypto.jwt(ctx, { expires });
+        setCookie(ctx, 'token', token, { expires }); // 设置 cookie
+        return ctx.json(decorator({ token, userinfo }));
+      } catch (error) {
+        return ctx.json(decorator(error), 400);
+      }
     },
   );
 
@@ -98,22 +128,172 @@ export const register = (app: Hono) => {
   });
 
   /**
-   * 注册
-   * 客户端提交的密码必须为hash值
-   * password: crypto.createHash("sha256").update(password).digest("hex")
+   * 发送邮箱验证码
    */
-  app.get(
-    '/signup',
-    validator('json', (value, { json }) => {
+  app.post(
+    '/email/captcha',
+    iRateLimit({
+      quota: 1,
+      window: 1 * 60 * 1000, // 1 minutes
+    }),
+    validator('json', async (value, { json }) => {
       try {
-        const { schema } = schemas.users;
-        return { row: schema.insert.parse(value) };
+        return z
+          .object({
+            email: z
+              .string({
+                required_error: '"Email" is required',
+              })
+              .email({
+                message: '"Email" must be a valid email',
+              }),
+          })
+          .parse(value);
       } catch (error) {
         return json(decorator(error), 400);
       }
     }),
     async ({ req, json }) => {
-      return json(decorator(await users.create(req.valid('json'))));
+      try {
+        const data = req.valid('json');
+        const res = await captcha.create(data);
+        return json(decorator(res));
+      } catch (error) {
+        return json(decorator(error), 400);
+      }
+    },
+  );
+
+  // 绑定邮箱
+  app.put(
+    '/email/bind',
+    validator('json', async (value, ctx) => {
+      const { json } = ctx;
+      try {
+        const data = z
+          .object({ email: z.string().email(), captcha: z.string() })
+          .parse(value);
+
+        if (!(await captcha.isMatch(data))) {
+          throw new Error('Invalid captcha');
+        }
+
+        return data;
+      } catch (error) {
+        return json(decorator(error), 400);
+      }
+    }),
+    async (ctx) => {
+      const { req, json } = ctx;
+      const { email } = req.valid('json');
+      const { id } = (await session.get(ctx)) ?? {};
+      if (!isString(id)) throw new Error('User not found');
+      return json(decorator(await users.update(id, { email })));
+    },
+  );
+
+  /**
+   * 重置密码
+   * TODO: 使用重置链接、通知用户密码已更改
+   */
+  app.patch(
+    '/password/reset',
+    validator('json', async (value, ctx) => {
+      const { json } = ctx;
+      try {
+        const data = z
+          .object({
+            captcha: z.string(),
+            password: z.string().regex(/^[a-f0-9]{64}$/i),
+          })
+          .parse(value);
+        const { id } = (await session.get(ctx)) ?? {};
+
+        if (!isString(id)) throw new Error('User not found');
+        const info = await users.queryById(id);
+
+        const { email } = info;
+        if (!isString(email)) throw new Error('Plz bind email');
+        const isMatch = await captcha.isMatch({ email, ...data });
+
+        if (isMatch) return { info, ...data };
+        throw new Error('Invalid captcha');
+      } catch (error) {
+        return json(decorator(error), 400);
+      }
+    }),
+    async (ctx) => {
+      const { req, json } = ctx;
+      try {
+        const salt = pcrypt.createSalt();
+        const { password, info } = req.valid('json');
+        const hashed = pcrypt.createHash(password, salt);
+        const res = await users.update(info.id, {
+          password: pcrypt.pack(hashed, salt),
+        });
+        return json(decorator(res));
+      } catch (error) {
+        return json(decorator(error), 400);
+      }
+    },
+  );
+
+  /**
+   * 注册
+   */
+  app.get(
+    '/signup',
+    validator('json', async (value, { json }) => {
+      try {
+        const { schema } = schemas.users;
+        const { email, mobile, captcha, password, ...others } = z
+          .object({
+            email: z.string().email().optional(),
+            mobile: z.string().optional(),
+            password: z
+              .string({
+                required_error: '"Password" is required',
+              })
+              .regex(/^[a-f0-9]{64}$/i),
+            captcha: z.string({
+              required_error: '"Captcha" is required',
+            }),
+          })
+          .parse(value);
+
+        if (isString(email)) {
+          if (!(await users.exist({ email }))) {
+            throw new Error('Email is already exists');
+          }
+        }
+
+        if (isString(mobile)) {
+          if (!(await users.exist({ mobile }))) {
+            throw new Error('Mobile is already exists');
+          }
+        }
+
+        const salt = pcrypt.createSalt();
+        const hashed = pcrypt.createHash(password, salt);
+
+        return schema.insert.parse({
+          email,
+          mobile,
+          password: pcrypt.pack(hashed, salt),
+          ...others,
+        });
+      } catch (error) {
+        return json(decorator(error), 400);
+      }
+    }),
+    async ({ req, json }) => {
+      const row = req.valid('json');
+      try {
+        const res = await users.create({ row });
+        return json(decorator(res));
+      } catch (error) {
+        return json(decorator(error), 400);
+      }
     },
   );
 };
