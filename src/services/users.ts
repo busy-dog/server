@@ -1,6 +1,6 @@
 import { v7 } from 'uuid';
 
-import { isNullish, isNumber, isString } from 'remeda';
+import { isNullish, isString } from 'remeda';
 
 import { eq, or } from 'drizzle-orm';
 
@@ -11,16 +11,9 @@ import type {
   UserSelectModel,
 } from 'src/schemas';
 import { schemas } from 'src/schemas';
-import { compact } from 'src/utils';
+import { compact, isScalar } from 'src/utils';
 
 import type { GithubUserInfo } from './github';
-
-type Scalar = string | number;
-
-// type UserKeys = keyof UserSelectModel;
-
-const isScalar = (value: unknown): value is Scalar =>
-  isString(value) || isNumber(value);
 
 const info = () => {
   const { common } = db;

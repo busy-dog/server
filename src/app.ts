@@ -30,7 +30,6 @@ export const app = register(
         }),
       )
       .use('*', middlewares.iLogger())
-      .use('*', middlewares.iAuth())
-      .use('*', middlewares.iSessionHandler()),
+      .use('*', middlewares.iAuth()),
   ),
 );

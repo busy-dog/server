@@ -1,14 +1,15 @@
-import type { Context } from 'hono';
-import { getCookie } from 'hono/cookie';
-
 import { isString } from 'remeda';
 
-import { drive, drives, session } from 'src/helpers';
-import { iSearchParams, toSnakeCaseKeys } from 'src/utils';
-
-const host = 'https://github.com';
+import { drive, drives } from 'src/helpers';
+import { toSnakeCaseKeys } from 'src/utils';
 
 const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = process.env;
+
+export const host = 'https://github.com';
+
+export const clientId = GITHUB_CLIENT_ID;
+
+export const clientSecret = GITHUB_CLIENT_SECRET;
 
 /**
  * Github 用户信息
@@ -146,29 +147,6 @@ export const token = async (code: string) => {
   } catch (error) {
     throw new Error('GitHub OAuth error:' + error);
   }
-};
-
-/**
- * 获取 Github 授权 URL
- * @param ctx - 上下文
- * @returns Github 授权 URL
- */
-export const authorize = async (
-  ctx: Context,
-  _: {
-    redirect?: string;
-  } = {},
-) => {
-  return [
-    `${host}/login/oauth/authorize`,
-    iSearchParams(
-      toSnakeCaseKeys({
-        // redirectUri: redirect,
-        clientId: GITHUB_CLIENT_ID,
-        state: getCookie(ctx, session.name),
-      }),
-    ),
-  ].join('?');
 };
 
 export const userinfo = async (token: string) => {

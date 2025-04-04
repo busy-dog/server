@@ -58,30 +58,13 @@ export const register = (app: Hono) => {
         const { id } = await users.query((instance, table) =>
           instance.where(eq(table.githubId, githubId)),
         );
-        await session.set(state, { ...res, id });
+        await session.set(state, { id });
         return redirect('http://127.0.0.1:8080');
       } catch (error) {
         report.error(error);
         const msg = isError(error) ? error.message : '';
         return redirect('http://127.0.0.1:8080?error=' + msg);
       }
-    },
-  );
-
-  /**
-   * 获取 Github 用户信息
-   */
-  app.get(
-    '/github/userinfo',
-    validator('cookie', async (_, ctx) => {
-      const res = await session.get(ctx);
-      const { access_token: token } = res ?? {};
-      if (isString(token)) return { token };
-      return ctx.json(decorator(new Error('Github token not find')), 401);
-    }),
-    async ({ req, json }) => {
-      const { token } = req.valid('cookie');
-      return json(decorator(await github.userinfo(token)));
     },
   );
 };

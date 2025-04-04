@@ -17,6 +17,8 @@ import {
 
 export type Nil = undefined | null;
 
+export type Scalar = string | number;
+
 export type PlainObject = Record<string, unknown>;
 
 /**
@@ -39,6 +41,10 @@ export function isUint8Array(source: unknown): source is Uint8Array {
   return source instanceof Uint8Array;
 }
 
+export const isNonEmptyString = (source: unknown): source is string => {
+  return isString(source) && hasAtLeast([...source], 1);
+};
+
 export const isNonEmptyArray = (source: unknown): source is unknown[] => {
   return isArray(source) && hasAtLeast(source, 1);
 };
@@ -49,6 +55,11 @@ export const isNonEmptyArray = (source: unknown): source is unknown[] => {
 export function isStringArray(source: unknown): source is string[] {
   return isNonEmptyArray(source) && source.every(isString);
 }
+
+// type UserKeys = keyof UserSelectModel;
+
+export const isScalar = (value: unknown): value is Scalar =>
+  isString(value) || isNumber(value);
 
 /**
  * Removes falsy values (false, null, 0, "", undefined, and NaN) from an array.
@@ -120,6 +131,23 @@ export const isEmptyValue = (
   if (isObjectType(data) && isEmpty(data)) return true;
   return false;
 };
+
+export const iSrc = (
+  src:
+    | string
+    | {
+        host: string;
+        pathname: string;
+      },
+  params?: unknown,
+) =>
+  [
+    (() => {
+      if (isString(src)) return src;
+      return `${src.host}${src.pathname}`;
+    })(),
+    iSearchParams(params),
+  ].join('?');
 
 /**
  * Constructs and returns a URLSearchParams object based on the provided initialization data.

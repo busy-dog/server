@@ -1,5 +1,5 @@
-import type { KeyPairSyncResult } from 'crypto';
-import { generateKeyPairSync } from 'crypto';
+import type { KeyPairSyncResult } from 'node:crypto';
+import { generateKeyPairSync } from 'node:crypto';
 
 import { isNullish, isString } from 'remeda';
 

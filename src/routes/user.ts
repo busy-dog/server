@@ -3,20 +3,20 @@ import { setCookie } from 'hono/cookie';
 import { validator } from 'hono/validator';
 
 import dayjs from 'dayjs';
+import { eq, or } from 'drizzle-orm';
 import { authenticator } from 'otplib';
 import { isString } from 'remeda';
 import { z } from 'zod';
 
-import { eq, or } from 'drizzle-orm';
-import { decorator, session } from 'src/helpers';
+import { decorator, jwt, session } from 'src/helpers';
 import { middlewares } from 'src/middlewares';
 import { iRateLimit } from 'src/middlewares/limit';
 import { schemas } from 'src/schemas';
 import { services } from 'src/services';
-import { pcrypt } from 'src/utils';
+import { iSrc, isNonEmptyString, pcrypt, toSnakeCaseKeys } from 'src/utils';
 
 export const register = (app: Hono) => {
-  const { captcha, users, crypto, github } = services;
+  const { captcha, users, github } = services;
   /**
    * oatuh2 授权登录
    */
@@ -25,10 +25,24 @@ export const register = (app: Hono) => {
     const method = req.param('method');
     try {
       if (method === 'github') {
-        return redirect(
-          await github.authorize(ctx, {
-            redirect: 'http://127.0.0.1:3000',
-          }),
+        const sessionId = await (async () => {
+          const id = await session.id(ctx);
+          if (isNonEmptyString(id)) return id;
+          return session.create(ctx);
+        })();
+
+        return await redirect(
+          iSrc(
+            {
+              host: github.host,
+              pathname: '/login/oauth/authorize',
+            },
+            toSnakeCaseKeys({
+              state: sessionId,
+              clientId: github.clientId,
+              // redirectUri,
+            }),
+          ),
         );
       }
       throw new Error('Invalid method');
@@ -110,8 +124,9 @@ export const register = (app: Hono) => {
       try {
         const userinfo = await ctx.req.valid('json');
         const expires = dayjs().add(30, 'day').toDate(); // 30 天
-        const token = await crypto.jwt(ctx, { expires });
-        setCookie(ctx, 'token', token, { expires }); // 设置 cookie
+        const token = await jwt.sign(ctx, { expires });
+        await session.set(ctx, { id: userinfo.id });
+        setCookie(ctx, 'jwt', token, { expires }); // 设置 cookie
         return ctx.json(decorator({ token, userinfo }));
       } catch (error) {
         return ctx.json(decorator(error), 400);
@@ -171,7 +186,10 @@ export const register = (app: Hono) => {
       const { json } = ctx;
       try {
         const data = z
-          .object({ email: z.string().email(), captcha: z.string() })
+          .object({
+            email: z.string().email(),
+            captcha: z.string(),
+          })
           .parse(value);
 
         if (!(await captcha.isMatch(data))) {
@@ -241,7 +259,7 @@ export const register = (app: Hono) => {
   /**
    * 注册
    */
-  app.get(
+  app.post(
     '/signup',
     validator('json', async (value, { json }) => {
       try {
@@ -296,4 +314,17 @@ export const register = (app: Hono) => {
       }
     },
   );
+
+  app.get('/userinfo', async (ctx) => {
+    try {
+      const res = await session.get(ctx);
+      const { id } = res ?? {};
+      console.log(res);
+      if (!isString(id)) throw new Error('User not found');
+      const info = await users.queryById(id);
+      return ctx.json(decorator(info));
+    } catch (error) {
+      return ctx.json(decorator(error), 400);
+    }
+  });
 };

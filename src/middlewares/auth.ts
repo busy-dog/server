@@ -1,9 +1,7 @@
-import { bearerAuth } from 'hono/bearer-auth';
-import { getCookie } from 'hono/cookie';
 import { createMiddleware } from 'hono/factory';
+import { isString } from 'remeda';
 
-import { report, session } from 'src/helpers';
-import { services } from 'src/services';
+import { decorator, jwt, report, session } from 'src/helpers';
 
 /**
  * 认证中间件
@@ -11,13 +9,13 @@ import { services } from 'src/services';
  * @returns
  */
 export const iAuth = () => {
-  const { isVaildJwt } = services.crypto;
   return createMiddleware(async (ctx, next) => {
     const { url } = ctx.req;
     const { pathname } = new URL(url);
+
     const res = await session.get(ctx);
     const api = pathname.replace('/api', '');
-    const jwt = await getCookie(ctx, 'token');
+    const { jwt: code } = (await jwt.find(ctx)) ?? {};
     if (
       // 白名单
       api.startsWith('/github') ||
@@ -26,17 +24,13 @@ export const iAuth = () => {
       api.startsWith('/captcha')
     ) {
       report.info(`Spik auth:${api}`, { name: 'Auth' });
-      await next();
-    } else if (res?.id || (await isVaildJwt(jwt))) {
-      report.info(`Vaild Jwt:${api}`, { name: 'Auth' });
-      await next();
+    } else if (res?.id) {
+      report.info(`Vaild Session:${api}`, { name: 'Auth' });
+    } else if (isString(code) && (await jwt.isVaildJwt(code))) {
+      report.info(`Vaild jwt:${api}`, { name: 'Auth' });
     } else {
-      const bearer = bearerAuth({
-        verifyToken: async (token) => {
-          return (await isVaildJwt(token)) ?? false;
-        },
-      });
-      return bearer(ctx, next);
+      return ctx.json(decorator(new Error('Unauthorized')), 401);
     }
+    await next();
   });
 };
