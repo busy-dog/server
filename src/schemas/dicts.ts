@@ -2,7 +2,7 @@ import { boolean, pgTable, smallint, text, varchar } from 'drizzle-orm/pg-core';
 
 import { cols } from 'src/helpers';
 
-const table = pgTable('dictionary', {
+export const dicts = pgTable('dictionary', {
   path: varchar('path', { length: 255 }).primaryKey(),
   parent: varchar('parent', { length: 36 }),
   code: varchar('code', { length: 15 }),
@@ -17,6 +17,6 @@ const table = pgTable('dictionary', {
   ...cols.timestamps,
 });
 
-export const dicts = {
-  table,
-};
+export type DictInfoModel = typeof dicts.$inferInsert;
+
+export type DictSelectModel = Partial<typeof dicts.$inferSelect>;

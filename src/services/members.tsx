@@ -3,16 +3,16 @@ import { v7 } from 'uuid';
 import { isNullish, isString } from 'remeda';
 
 import { eq, or } from 'drizzle-orm';
-import type { UserInfoModel, UserSelectModel } from 'src/schemas';
+import type { MemberInfoModel, MemberSelectModel } from 'src/schemas';
 import { tables } from 'src/schemas';
 import { compact, isScalar } from 'src/utils';
 
 import { createCommonServer } from './common';
 import type { GithubUserInfo } from './github';
 
-const { users: table } = tables;
+const { members: table } = tables;
 
-const account = createCommonServer(table);
+const server = createCommonServer(table);
 
 export const exist = async ({
   id,
@@ -20,8 +20,8 @@ export const exist = async ({
   mobile,
   googleId,
   githubId,
-}: UserSelectModel) =>
-  account.exist(
+}: MemberSelectModel) =>
+  server.exist(
     or(
       ...compact([
         isString(id) && eq(table.id, id),
@@ -37,7 +37,7 @@ export const create = async ({
   row,
   github,
 }: {
-  row?: UserInfoModel;
+  row?: MemberInfoModel;
   github?: GithubUserInfo;
 }) => {
   const value = (() => {
@@ -45,7 +45,6 @@ export const create = async ({
     if (github)
       return {
         id: v7(),
-        role: 'user',
         status: 'active',
         creator: 'github',
         name: github.name ?? github.login,
@@ -59,11 +58,9 @@ export const create = async ({
   if (isNullish(value)) {
     throw new Error('No user info provided');
   }
-  return account.create(value);
+  return server.create(value);
 };
 
-export { table };
+export const query = server.query;
 
-export const query = account.query;
-
-export const update = account.update;
+export const update = server.update;

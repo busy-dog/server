@@ -1,34 +1,24 @@
 import {
-  boolean,
   char,
-  date,
   index,
   pgTable,
   uniqueIndex,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { createInsertSchema } from 'drizzle-zod';
 
 import { cols } from 'src/helpers';
 
-const table = pgTable(
+export const members = pgTable(
   'members',
   {
     id: char('id', { length: 36 }).primaryKey(),
-    name: varchar('name', { length: 63 }).notNull(),
-    birth: date('birth'),
-    gender: varchar('gender', { length: 31 }),
-    avatar: varchar('avatar', { length: 255 }),
-    password: varchar('password', { length: 255 }),
-    email: varchar('email', { length: 255 }).unique(),
-    mobile: varchar('mobile', { length: 15 }).unique(),
+    ...cols.person,
     status: varchar('status', { length: 31 }),
     appleId: varchar('apple_id', { length: 63 }),
     googleId: varchar('google_id', { length: 63 }),
-    otpSecret: varchar('otp_base32', { length: 255 }),
-    otpAuthUri: varchar('otp_auth_uri', { length: 255 }),
-    otpEnabled: boolean('otp_enabled').default(false),
-    otpVerified: boolean('otp_verified').default(false),
+    githubId: varchar('github_id', { length: 63 }),
+    password: varchar('password', { length: 255 }),
+    ...cols.otps,
     ...cols.owners,
     ...cols.timestamps,
   },
@@ -39,15 +29,6 @@ const table = pgTable(
   ],
 );
 
-export type MemberInsertModel = typeof table.$inferInsert;
+export type MemberInfoModel = typeof members.$inferInsert;
 
-export type MemberSelectModel = Partial<typeof table.$inferSelect>;
-
-export type MemberInfoModel = MemberInsertModel & MemberSelectModel;
-
-export const member = {
-  table,
-  schema: {
-    insert: createInsertSchema(table),
-  },
-};
+export type MemberSelectModel = Partial<typeof members.$inferSelect>;
