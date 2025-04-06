@@ -10,20 +10,20 @@ import * as crons from './crons';
 import * as error from './error';
 import { report } from './helpers';
 
-const { PORT, HOST } = process.env;
+crons.start();
 
 app.onError(error.handler);
 
 const server = serve({
-  hostname: HOST,
   fetch: app.fetch,
-  port: Number(PORT),
+  hostname: process.env.HOST,
+  port: Number(process.env.PORT),
 });
 
 server.addListener('listening', () => {
   report.info(dayjs.tz.guess());
+  const { PORT, HOST } = process.env;
   report.info(`Running at ${HOST}:${PORT}`);
-  crons.start();
 });
 
 server.addListener('close', async () => {

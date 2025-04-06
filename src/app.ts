@@ -34,5 +34,6 @@ const app = new Hono<AppEnv>()
   .route('/user', iUserApp)
   .route('/github', iGithubApp);
 
-export { app };
 export type App = typeof app;
+
+export { app };

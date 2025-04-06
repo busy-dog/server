@@ -1,11 +1,10 @@
 import type { Context, Next } from 'hono';
-
-import { getConnInfo } from '@hono/node-server/conninfo';
 import { isNumber, isString } from 'remeda';
 
 import { createMiddleware } from 'hono/factory';
+import { HTTPException } from 'hono/http-exception';
 import { redis } from 'src/databases';
-import { decorator, report, session } from 'src/helpers';
+import { report, session } from 'src/helpers';
 
 interface RateLimitConfig {
   /**
@@ -34,7 +33,11 @@ interface RateLimitOptions extends RateLimitConfig {
   /**
    * 当客户端受到速率限制时，Hono 请求处理程序会发回响应。
    */
-  handler?: (c: Context, next: Next, config: RateLimitConfig) => void;
+  handler?: (
+    c: Context,
+    next: Next,
+    params: RateLimitConfig & { remaining: number },
+  ) => void;
 }
 
 /**
@@ -47,82 +50,66 @@ export const iRateLimit = (options: RateLimitOptions) => {
     skipCounting,
     keyGenerator = async (ctx: Context) => {
       const { id } = (await session.get(ctx)) ?? {};
-      const { address } = getConnInfo(ctx)?.remote ?? {};
-      const identifier = id ?? ctx.req.header('x-forwarded-for') ?? address;
-      if (!isString(identifier)) return ['api-rate', identifier].join(':');
+      const forwarded = ctx.req.header('x-forwarded-for');
+      const identifier = id ?? forwarded ?? (await session.id(ctx));
+      if (isString(identifier)) return ['api-rate', identifier].join(':');
     },
-    handler = ({ json }) => {
-      return json(
-        decorator(
-          new Error(
-            `Too many requests, Please try again after a ${window / 1000} seconds.`,
-          ),
-        ),
-        429,
-      );
+    handler = (_, __, { remaining }) => {
+      const seconds = Math.ceil(remaining / 1000);
+      const message = `Too many requests, Please try again after a ${seconds} seconds.`;
+      throw new HTTPException(429, { message });
     },
   } = options;
 
   return createMiddleware(async (ctx: Context, next: Next) => {
-    try {
-      const key = await keyGenerator(ctx);
+    const key = await keyGenerator(ctx);
 
-      if (!isString(key)) {
-        report.warn(new Error('Skip counting because not key'), {
-          name: 'RateLimit',
-        });
-        return await next();
-      }
-
-      if (await skipCounting?.(ctx, key)) {
-        return await next();
-      }
-
-      const { count, remaining } = await (async () => {
-        // 使用 Redis 的 multi 命令保证原子性
-        const multi = redis[0].multi();
-
-        // 获取当前计数
-        await multi.get(key);
-        // 获取 TTL
-        await multi.pttl(key);
-
-        const [current, ttl] = (await multi.exec()) ?? [];
-        const count = parseInt(current?.[1]?.toString() ?? '0');
-        const remaining = parseInt(ttl?.[1]?.toString() ?? '0');
-
-        return { count, remaining };
-      })();
-
-      const max = await (async () => {
-        if (isNumber(quota)) return quota;
-        return await quota(ctx);
-      })();
-
-      const reset = Math.ceil(remaining / 1000);
-      ctx.header('RateLimit-Limit', max.toString());
-      ctx.header('RateLimit-Reset', reset.toString());
-
-      if (count >= max) {
-        // 超出限制
-        ctx.header('RateLimit-Remaining', '0');
-        ctx.header('Retry-After', reset.toString());
-        return await handler(ctx, next, { window, quota });
-      }
-
-      await (async () => {
-        // 增加计数并设置过期时间
-        const multi = redis[0].multi();
-        multi.incr(key);
-        count === 0 && multi.pexpire(key, window);
-        await multi.exec();
-        ctx.header('RateLimit-Remaining', (max - count - 1).toString());
-      })();
-      await next();
-    } catch (error) {
-      // Redis 错误时默认允许请求通过
-      report.error(error, { name: 'RateLimitError' });
-      await next();
+    if (!isString(key)) {
+      report.warn(new Error('Skip counting because not key'), {
+        name: 'RateLimit',
+      });
+      return await next();
     }
+
+    if (await skipCounting?.(ctx, key)) {
+      return await next();
+    }
+
+    const { count, remaining } = await (async () => {
+      // 使用 Redis 的 multi 命令保证原子性
+      // 启动事务 -> 获取当前计数 -> 获取 TTL -> 执行事务
+      const multi = redis[0].multi().get(key).pttl(key);
+      const [current, ttl] = (await multi.exec()) ?? [];
+      const count = parseInt(current?.[1]?.toString() ?? '0');
+      const remaining = parseInt(ttl?.[1]?.toString() ?? '0');
+      return { count, remaining };
+    })();
+
+    const max = await (async () => {
+      if (isNumber(quota)) return quota;
+      return await quota(ctx);
+    })();
+
+    const reset = Math.ceil(remaining / 1000);
+    ctx.header('RateLimit-Limit', max.toString());
+    ctx.header('RateLimit-Reset', reset.toString());
+
+    if (count >= max) {
+      // 超出限制
+      ctx.header('RateLimit-Remaining', '0');
+      ctx.header('Retry-After', reset.toString());
+      return await handler(ctx, next, { window, quota, remaining });
+    }
+
+    await (async () => {
+      // 增加计数并设置过期时间
+      const multi = redis[0].multi();
+      multi.incr(key);
+      count === 0 && multi.pexpire(key, window);
+      await multi.exec();
+      ctx.header('RateLimit-Remaining', (max - count - 1).toString());
+    })();
+
+    await next();
   });
 };

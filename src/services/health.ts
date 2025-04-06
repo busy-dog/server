@@ -2,7 +2,7 @@ import { isNumber } from 'remeda';
 
 import { db, redis } from 'src/databases';
 
-import * as report from './report';
+import { report } from 'src/helpers';
 
 export async function iRedisChecker() {
   try {

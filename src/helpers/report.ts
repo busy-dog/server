@@ -45,20 +45,20 @@ export const info = (
 
 export const warn = (
   data: Error | string,
-  params: {
+  options: {
     name?: string;
   } = {},
 ): void => {
   if (isError(data)) {
     const { message } = data;
-    const name = params.name ?? data.name;
+    const name = options.name ?? data.name;
     console.warn(
       time(colors.amber),
       hex(colors.amber)(`[${name}]`),
       hex(colors.amber)(message),
     );
   } else {
-    const name = params.name ?? 'Warn';
+    const name = options.name ?? 'Warn';
     console.warn(
       time(colors.amber),
       hex(colors.amber)(`[${name}]`),
@@ -69,24 +69,32 @@ export const warn = (
 
 export const error = (
   error: unknown,
-  params: {
+  options: {
     name?: string;
   } = {},
 ): void => {
+  const { name } = options;
   if (isError(error)) {
     console.error(
       time(colors.scarlet),
-      hex(colors.scarlet)(`[${params.name ?? error.name}]`),
+      hex(colors.scarlet)(`[${name ?? error.name}]`),
       '\n\t' + hex(colors.scarlet)(error.message),
       hex(colors.scarlet)(error.stack?.toString()),
     );
   }
 };
 
-export const sql = (query: string, _: unknown[]): void => {
+export const sql = (
+  query: string,
+  _: unknown[],
+  options: {
+    name?: string;
+  } = {},
+): void => {
+  const { name } = options;
   console.info(
     time(colors.violet),
-    hex(colors.violet)('[SQL]'),
+    hex(colors.violet)(`[${name ?? 'SQL'}]`),
     hex(colors.violet)(query),
     // '\n\t' + hex(colors.violet)(format(query, params)),
   );

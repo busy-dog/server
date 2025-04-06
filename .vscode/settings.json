@@ -9,8 +9,9 @@
     "source.fixAll.biome": "explicit",
     "quickfix.biome": "explicit"
   },
-  "typescript.tsdk": "node_modules/typescript/lib",
   "git.ignoreLimitWarning": true,
+  "biome.lspBin": "node_modules/.bin/biome.exe",
+  "typescript.tsdk": "node_modules/typescript/lib",
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
@@ -23,12 +24,18 @@
   },
   "files.associations": {
     "*.env": "ini",
-    "assets/index.html": "ejs"
+    "*.html": "ejs"
   },
-  "cssVariables.lookupFiles": [
-    "**/themes/*.css",
-    "src/styles/cover.ant.token.global.scss"
-  ],
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    ".env": ".env.*",
+    "run.ts": "*.ts",
+    "README.md": "*.md",
+    ".gitconfig": ".gitignore, .gitattributes",
+    "package.json": "package.json.*, pnpm-*, .npmrc, .nvmrc",
+    "tsconfig.json": "tsconfig*, *.d.ts",
+    "drizzle.config.ts": "drizzle*"
+  },
   "[svg]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "DotJoshJohnson.xml"
@@ -49,6 +56,5 @@
   "[typescriptreact]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "biomejs.biome"
-  },
-  "biome.lspBin": "node_modules/.bin/biome.exe"
+  }
 }

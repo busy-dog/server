@@ -1,7 +1,8 @@
 import { createMiddleware } from 'hono/factory';
+import { HTTPException } from 'hono/http-exception';
 import { isString } from 'remeda';
 
-import { decorator, jwt, report, session } from 'src/helpers';
+import { jwt, report, session } from 'src/helpers';
 
 /**
  * 认证中间件
@@ -29,7 +30,7 @@ export const iAuth = () => {
     } else if (isString(code) && (await jwt.isVaildJwt(code))) {
       report.info(`Vaild jwt:${api}`, { name: 'Auth' });
     } else {
-      return ctx.json(decorator(new Error('Unauthorized')), 401);
+      throw new HTTPException(401, { message: 'Unauthorized' });
     }
     await next();
   });

@@ -1,8 +1,12 @@
 import type { Context } from 'hono';
-import { isError, isNullish, isObjectType, isString, merge } from 'remeda';
-import { ensure, safe } from 'src/utils';
-import { z } from 'zod';
-import { report } from '.';
+import { isError, isNullish, isString, join, map, merge, pipe } from 'remeda';
+import { ensure } from 'src/utils';
+import { ZodError } from 'zod';
+import * as report from './report';
+
+const isZodError = (err: unknown): err is ZodError => {
+  return err instanceof ZodError;
+};
 
 export const decorator = <T>(
   data: T,
@@ -25,51 +29,31 @@ export const decorator = <T>(
     return { name: 'Decorator', pathname: undefined };
   })();
 
-  const err = (() => {
+  const error = (() => {
+    if (isZodError(data)) {
+      return pipe(
+        data.errors,
+        map(({ message }) => message),
+        join(' & '),
+      );
+    }
     if (isError(data)) {
-      report.error(data, { name });
-      const { message } = data;
-      const json = safe(JSON.parse)(message);
-      if (isObjectType(json)) {
-        // 解析Zod抛出的错误信息
-        const res = z
-          .array(
-            z.object({
-              code: z.string(),
-              expected: z.string(),
-              received: z.string(),
-              path: z.array(z.string()),
-              message: z.string(),
-            }),
-          )
-          .safeParse(json);
-
-        if (res.success) {
-          return res.data.map(({ message }) => message).join(' & ');
-        }
-
-        return res.data;
-      }
-
-      return json ?? message;
+      return data.message;
     }
   })();
 
-  if (!err) {
+  !isString(error) &&
     report.info(JSON.stringify(data), {
       name,
-      directory: {
-        pathname,
-      },
+      directory: { pathname },
     });
-  }
 
   return merge(
     {
       code,
+      data: null,
       success: false,
-      data: ensure(isObjectType(err) && err),
-      message: message ?? ensure(isString(err) && err),
+      message: message ?? ensure(isString(error) && error),
     },
     ensure(
       !isError(data) && {

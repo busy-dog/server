@@ -15,7 +15,7 @@ const {
 
 export class AnsisLogger implements Logger {
   logQuery(query: string, params: unknown[]): void {
-    report.sql(query, params);
+    report.sql(query, params, { name: 'Postgres' });
   }
 }
 

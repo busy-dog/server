@@ -179,9 +179,8 @@ app.put(
     const { email } = data;
     const { id } = (await session.get(ctx)) ?? {};
     if (!isString(id)) throw new Error('User not found');
-    return json(
-      decorator(await users.update({ email }, eq(users.table.id, id))),
-    );
+    const res = await users.update({ email }, eq(users.table.id, id));
+    return json(decorator(res));
   },
 );
 
@@ -228,7 +227,6 @@ app.patch(
 app.post(
   '/signup',
   validator('json', async (value) => {
-    const { schema } = schemas.users;
     const { email, mobile, captcha, password, ...others } = z
       .object({
         email: z.string().email().optional(),
@@ -259,7 +257,7 @@ app.post(
     const salt = pcrypt.createSalt();
     const hashed = pcrypt.createHash(password, salt);
 
-    return schema.insert.parse({
+    return schemas.users.insert.parse({
       email,
       mobile,
       password: pcrypt.pack(hashed, salt),
@@ -273,11 +271,18 @@ app.post(
   },
 );
 
-app.get('/info', async (ctx) => {
-  const res = await session.get(ctx);
-  if (!isString(res?.id)) throw new Error('User not found');
-  const info = await users.query(eq(users.table.id, res.id));
-  return ctx.json(decorator(info));
-});
+app.get(
+  '/info',
+  iRateLimit({
+    quota: 1,
+    window: 10 * 60 * 1000, // 10 minutes
+  }),
+  async (ctx) => {
+    const res = await session.get(ctx);
+    if (!isString(res?.id)) throw new Error('User not found');
+    const info = await users.query(eq(users.table.id, res.id));
+    return ctx.json(decorator(info));
+  },
+);
 
 export { app };

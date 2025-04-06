@@ -15,9 +15,12 @@ import { decorator, report } from './helpers';
  */
 export const handler: ErrorHandler<AppEnv> = (err, ctx) => {
   report.error(err);
+  const res = decorator(err);
   if (err instanceof HTTPException) {
-    if (err.res) return err.getResponse();
-    return ctx.json(decorator(err), err.status);
+    if (err.res) {
+      return err.getResponse();
+    }
+    return ctx.json(res, err.status);
   }
-  return ctx.json(decorator(err), isError(err) ? 400 : 500);
+  return ctx.json(res, isError(err) ? 400 : 500);
 };
