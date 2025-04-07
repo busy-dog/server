@@ -5,8 +5,8 @@ export const person = {
   birth: date('birth'),
   gender: varchar('gender', { length: 31 }),
   avatar: varchar('avatar', { length: 255 }),
-  email: varchar('email', { length: 255 }).unique(),
-  mobile: varchar('mobile', { length: 15 }).unique(),
+  email: varchar('email', { length: 255 }),
+  mobile: varchar('mobile', { length: 15 }),
 };
 
 export const otps = {

@@ -23,9 +23,9 @@ export const members = pgTable(
     ...cols.timestamps,
   },
   (table) => [
-    index('status_index').on(table.status),
-    uniqueIndex('unique_email').on(table.email),
-    uniqueIndex('unique_mobile').on(table.mobile),
+    index('members_status_index').on(table.status),
+    uniqueIndex('members_email_unique').on(table.email),
+    uniqueIndex('members_mobile_unique').on(table.mobile),
   ],
 );
 

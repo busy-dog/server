@@ -6,13 +6,12 @@ import { serve } from '@hono/node-server';
 import dayjs from 'dayjs';
 
 import { app } from './app';
-import * as crons from './crons';
-import * as error from './error';
-import { report } from './helpers';
+import { crons } from './crons';
+import { report, responder } from './helpers';
 
 crons.start();
 
-app.onError(error.handler);
+app.onError(responder.error);
 
 const server = serve({
   fetch: app.fetch,

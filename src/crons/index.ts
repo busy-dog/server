@@ -7,7 +7,7 @@ import { CronJob } from 'cron';
 
 import { services } from 'src/services';
 
-export const start = () => {
+const start = () => {
   const { TZ } = process.env;
   const { health } = services;
 
@@ -23,4 +23,8 @@ export const start = () => {
       health.iPostgresqlChecker();
     },
   }).start();
+};
+
+export const crons = {
+  start,
 };

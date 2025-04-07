@@ -1,11 +1,11 @@
 import { randomInt } from 'node:crypto';
 
 import { raw } from 'hono/html';
+import { timingSafeEqual } from 'hono/utils/buffer';
 
+import { isString } from 'remeda';
 import { Resend } from 'resend';
 
-import { timingSafeEqual } from 'hono/utils/buffer';
-import { isString } from 'remeda';
 import { redis } from 'src/databases';
 
 const { RESEND_API_KEY, RESEND_FROM_EMAIL } = process.env;
@@ -49,7 +49,11 @@ export const create = async (params: { email?: string }) => {
   throw new Error('Email is required');
 };
 
-export const isMatch = async (params: { captcha: string; email?: string }) => {
+export const isMatch = async (params: {
+  captcha: string;
+  email?: string;
+  mobile?: string;
+}) => {
   const { email, captcha } = params;
 
   if (isString(email)) {

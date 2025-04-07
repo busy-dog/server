@@ -2,7 +2,7 @@
 
 // import { cols } from 'src/helpers';
 
-// // 统一的设备表
+// 产品表
 // const table = pgTable(
 //   'products',
 //   {

@@ -1,8 +1,13 @@
-import type { Context } from 'hono';
-import { isError, isNullish, isString, join, map, merge, pipe } from 'remeda';
+import type { Context, ErrorHandler } from 'hono';
+import { HTTPException } from 'hono/http-exception';
+import { isNullish, isString, join, map, merge, pipe } from 'remeda';
 import { ensure } from 'src/utils';
 import { ZodError } from 'zod';
-import * as report from './report';
+
+import { isError } from 'remeda';
+
+import { report } from 'src/helpers';
+import type { AppEnv } from 'src/types';
 
 const isZodError = (err: unknown): err is ZodError => {
   return err instanceof ZodError;
@@ -33,7 +38,7 @@ export const decorator = <T>(
     if (isZodError(data)) {
       return pipe(
         data.errors,
-        map(({ message }) => message),
+        map(({ path, message }) => `${path} is ${message}`),
         join(' & '),
       );
     }
@@ -63,4 +68,23 @@ export const decorator = <T>(
       },
     ),
   );
+};
+
+/**
+ * 全局错误处理
+ * 详情见 https://hono.dev/docs/api/exception
+ * @param err 错误对象
+ * @param ctx 上下文对象
+ * @returns 响应对象
+ */
+export const error: ErrorHandler<AppEnv> = (err, ctx) => {
+  report.error(err);
+  const res = decorator(err);
+  if (err instanceof HTTPException) {
+    if (err.res) {
+      return err.getResponse();
+    }
+    return ctx.json(res, err.status);
+  }
+  return ctx.json(res, isError(err) ? 400 : 500);
 };

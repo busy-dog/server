@@ -5,9 +5,9 @@ import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 
-import type { AppEnv } from './helpers';
-import { middlewares } from './middlewares';
-import { iGithubApp, iOTPApp, iUserApp } from './routes';
+import { iGithubApp, iMemberApp, iOTPApp, iUserApp } from 'src/apps';
+import { middlewares } from 'src/middlewares';
+import type { AppEnv } from 'src/types';
 
 const { TZ } = process.env;
 
@@ -32,6 +32,7 @@ const app = new Hono<AppEnv>()
   .use('*', middlewares.iLogger())
   .route('/otp', iOTPApp)
   .route('/user', iUserApp)
+  .route('/member', iMemberApp)
   .route('/github', iGithubApp);
 
 export type App = typeof app;

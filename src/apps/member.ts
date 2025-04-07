@@ -8,46 +8,19 @@ import { authenticator } from 'otplib';
 import { isString } from 'remeda';
 import { z } from 'zod';
 
-import type { AppEnv } from 'src/helpers';
-import { decorator, jwt, session } from 'src/helpers';
+import { jwt, responder, session } from 'src/helpers';
 import { middlewares } from 'src/middlewares';
-import { iRateLimit } from 'src/middlewares/limit';
-import { schemas } from 'src/schemas';
+import { schemas, tables } from 'src/schemas';
 import { services } from 'src/services';
-import { iSrc, isNonEmptyString, pcrypt, toSnakeCaseKeys } from 'src/utils';
+import type { AppEnv } from 'src/types';
+import { pcrypt } from 'src/utils';
+import { v7 } from 'uuid';
 
 const app = new Hono<AppEnv>();
 
-const { captcha, users, github } = services;
-/**
- * oatuh2 授权登录
- */
-app.get('/oauth2/:method', async (ctx) => {
-  const { req, redirect } = ctx;
-  const method = req.param('method');
-  if (method === 'github') {
-    const sessionId = await (async () => {
-      const id = await session.id(ctx);
-      if (isNonEmptyString(id)) return id;
-      return session.create(ctx);
-    })();
+const { captcha, members } = services;
 
-    return await redirect(
-      iSrc(
-        {
-          host: github.host,
-          pathname: '/login/oauth/authorize',
-        },
-        toSnakeCaseKeys({
-          state: sessionId,
-          clientId: github.clientId,
-          // redirectUri,
-        }),
-      ),
-    );
-  }
-  throw new Error('Invalid method');
-});
+const { members: table } = tables;
 
 /**
  * 账户密码登录
@@ -87,8 +60,8 @@ app.post(
     const account = data.mobile ?? data.email;
     if (!isString(account)) throw new Error('"Account" is required');
 
-    const info = await users.query(
-      or(eq(users.table.email, account), eq(users.table.mobile, account)),
+    const info = await members.query(
+      or(eq(table.email, account), eq(table.mobile, account)),
     );
     if (!info) throw new Error('User not found');
 
@@ -113,12 +86,13 @@ app.post(
     return info;
   }),
   async (ctx) => {
+    await session.clear(ctx);
     const userinfo = await ctx.req.valid('json');
     const expires = dayjs().add(30, 'day').toDate(); // 30 天
     const token = await jwt.sign(ctx, { expires });
     await session.set(ctx, { id: userinfo.id });
     setCookie(ctx, 'jwt', token, { expires }); // 设置 cookie
-    return ctx.json(decorator({ token, userinfo }));
+    return ctx.json(responder.decorator({ token, userinfo }));
   },
 );
 
@@ -127,7 +101,7 @@ app.post(
  */
 app.get('/signout', async (ctx) => {
   await session.clear(ctx);
-  return ctx.json(decorator(null));
+  return ctx.json(responder.decorator(null));
 });
 
 /**
@@ -135,7 +109,7 @@ app.get('/signout', async (ctx) => {
  */
 app.post(
   '/email/captcha',
-  iRateLimit({
+  middlewares.iRateLimit({
     quota: 1,
     window: 1 * 60 * 1000, // 1 minutes
   }),
@@ -155,7 +129,7 @@ app.post(
   async ({ req, json }) => {
     const data = req.valid('json');
     const res = await captcha.create(data);
-    return json(decorator(res));
+    return json(responder.decorator(res));
   },
 );
 
@@ -179,8 +153,9 @@ app.put(
     const { email } = data;
     const { id } = (await session.get(ctx)) ?? {};
     if (!isString(id)) throw new Error('User not found');
-    const res = await users.update({ email }, eq(users.table.id, id));
-    return json(decorator(res));
+    return json(
+      responder.decorator(await members.update({ email }, eq(table.id, id))),
+    );
   },
 );
 
@@ -202,7 +177,7 @@ app.patch(
 
     if (!isString(id)) throw new Error('User not found');
 
-    const { email } = await users.query(eq(users.table.id, id));
+    const { email } = await members.query(eq(table.id, id));
     if (!isString(email)) throw new Error('Plz bind email');
     const isMatch = await captcha.isMatch({ email, ...data });
     if (isMatch) return { id, ...data };
@@ -213,11 +188,13 @@ app.patch(
     const salt = pcrypt.createSalt();
     const { password, id } = req.valid('json');
     const hashed = pcrypt.createHash(password, salt);
-    const res = await users.update(
-      { password: pcrypt.pack(hashed, salt) },
-      eq(users.table.id, id),
+    const res = await members.update(
+      {
+        password: pcrypt.pack(hashed, salt),
+      },
+      eq(table.id, id),
     );
-    return json(decorator(res));
+    return json(responder.decorator(res));
   },
 );
 
@@ -227,8 +204,11 @@ app.patch(
 app.post(
   '/signup',
   validator('json', async (value) => {
-    const { email, mobile, captcha, password, ...others } = z
+    const { email, mobile, password, ...others } = z
       .object({
+        name: z.string({
+          required_error: '"Name" is required',
+        }),
         email: z.string().email().optional(),
         mobile: z.string().optional(),
         password: z
@@ -243,46 +223,48 @@ app.post(
       .parse(value);
 
     if (isString(email)) {
-      if (!(await users.exist({ email }))) {
+      if (await members.exist({ email })) {
         throw new Error('Email is already exists');
       }
     }
 
     if (isString(mobile)) {
-      if (!(await users.exist({ mobile }))) {
+      if (await members.exist({ mobile })) {
         throw new Error('Mobile is already exists');
       }
     }
 
+    const isMatch = await captcha.isMatch({
+      email,
+      mobile,
+      captcha: others.captcha,
+    });
+    // TODO
+    if (!isMatch) throw new Error('Invalid captcha');
+
     const salt = pcrypt.createSalt();
     const hashed = pcrypt.createHash(password, salt);
 
-    return schemas.users.insert.parse({
+    return schemas.members.insert.parse({
       email,
       mobile,
+      id: v7(),
       password: pcrypt.pack(hashed, salt),
       ...others,
     });
   }),
   async ({ req, json }) => {
     const row = req.valid('json');
-    const res = await users.create({ row });
-    return json(decorator(res));
+    const res = await members.create({ row });
+    return json(responder.decorator(res));
   },
 );
 
-app.get(
-  '/info',
-  iRateLimit({
-    quota: 1,
-    window: 10 * 60 * 1000, // 10 minutes
-  }),
-  async (ctx) => {
-    const res = await session.get(ctx);
-    if (!isString(res?.id)) throw new Error('User not found');
-    const info = await users.query(eq(users.table.id, res.id));
-    return ctx.json(decorator(info));
-  },
-);
+app.get('/info', async (ctx) => {
+  const res = await session.get(ctx);
+  if (!isString(res?.id)) throw new Error('User not found');
+  const info = await members.query(eq(table.id, res.id));
+  return ctx.json(responder.decorator(info));
+});
 
 export { app };

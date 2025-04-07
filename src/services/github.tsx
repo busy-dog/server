@@ -1,7 +1,9 @@
-import { isString } from 'remeda';
+import { HTTPException } from 'hono/http-exception';
 
-import { drive, drives } from 'src/helpers';
-import { toSnakeCaseKeys } from 'src/utils';
+import { isError, isString } from 'remeda';
+
+import { drives } from 'src/helpers';
+import { ensure, toSnakeCaseKeys } from 'src/utils';
 
 const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = process.env;
 
@@ -128,6 +130,7 @@ export const token = async (code: string) => {
   const host = 'https://github.com';
   const api = '/login/oauth/access_token';
   try {
+    const { drive } = drives;
     const data = await drive.post<GithubAuthorize>(
       `${host}${api}`,
       toSnakeCaseKeys({
@@ -145,7 +148,22 @@ export const token = async (code: string) => {
     }
     return data;
   } catch (error) {
-    throw new Error('GitHub OAuth error:' + error);
+    throw new HTTPException(500, {
+      res: new Response(
+        (
+          <div>
+            GitHub OAuth error: {ensure(isError(error) ? error.message : '')}
+          </div>
+        ).toString(),
+        {
+          status: 500,
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Content-Type': 'text/html; charset=utf-8',
+          },
+        },
+      ),
+    });
   }
 };
 

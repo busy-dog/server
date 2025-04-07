@@ -39,6 +39,7 @@
     "drizzle-kit": "^0.30.6",
     "drizzle-seed": "^0.3.1",
     "husky": "^9.1.7",
+    "postgres": "^3.4.5",
     "tsx": "^4.19.3",
     "type-fest": "^4.37.0",
     "typescript": "^5.8.2"

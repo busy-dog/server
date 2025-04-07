@@ -22,6 +22,7 @@ export const iAuth = () => {
       api.startsWith('/github') ||
       api.startsWith('/signin') ||
       api.startsWith('/oauth2') ||
+      api.startsWith('/user/oauth2') ||
       api.startsWith('/captcha')
     ) {
       report.info(`Spik auth:${api}`, { name: 'Auth' });

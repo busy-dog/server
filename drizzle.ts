@@ -1,3 +1,5 @@
-import { tables } from './src/schemas';
+import { dicts } from './src/schemas/dicts';
+import { members } from './src/schemas/members';
+import { users } from './src/schemas/users';
 
-export default tables;
+export { dicts, members, users };

@@ -15,7 +15,7 @@ export const users = pgTable(
     ...cols.person,
     role: varchar('role', { length: 31 }),
     status: varchar('status', { length: 31 }),
-    // appleId: varchar('apple_id', { length: 63 }),
+    appleId: varchar('apple_id', { length: 63 }),
     githubId: varchar('github_id', { length: 63 }),
     googleId: varchar('google_id', { length: 63 }),
     password: varchar('password', { length: 255 }),
@@ -24,10 +24,10 @@ export const users = pgTable(
     ...cols.timestamps,
   },
   (table) => [
-    index('role_index').on(table.role),
-    index('status_index').on(table.status),
-    uniqueIndex('unique_email').on(table.email),
-    uniqueIndex('unique_mobile').on(table.mobile),
+    index('users_role_index').on(table.role),
+    index('users_status_index').on(table.status),
+    uniqueIndex('users_email_unique').on(table.email),
+    uniqueIndex('users_mobile_unique').on(table.mobile),
   ],
 );
 
