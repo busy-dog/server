@@ -1,8 +1,7 @@
+import { eq, or } from 'drizzle-orm';
+import { isNullish, isString } from 'remeda';
 import { v7 } from 'uuid';
 
-import { isNullish, isString } from 'remeda';
-
-import { eq, or } from 'drizzle-orm';
 import type { UserInfoModel, UserSelectModel } from 'src/databases';
 import { tables } from 'src/databases';
 import { compact, isScalar } from 'src/utils';
@@ -61,8 +60,6 @@ export const create = async ({
   }
   return account.create(value);
 };
-
-export { table };
 
 export const query = account.query;
 

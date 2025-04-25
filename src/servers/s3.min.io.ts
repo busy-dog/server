@@ -1,12 +1,15 @@
-import * as Minio from 'minio';
 import type { Readable } from 'node:stream';
+
+import type { ItemBucketMetadata } from 'minio';
+import { Client } from 'minio';
 import { isNullish } from 'remeda';
-import { isTrueString } from 'src/utils';
 import { z } from 'zod';
+
+import { isTrueString } from 'src/utils';
 
 const minio = (() => {
   const store = {
-    minio: null as Minio.Client | null,
+    minio: null as Client | null,
   };
 
   return () => {
@@ -27,7 +30,7 @@ const minio = (() => {
         })
         .parse(params);
 
-      store.minio = new Minio.Client(data);
+      store.minio = new Client(data);
     }
     return store.minio;
   };
@@ -48,7 +51,7 @@ export const getObject = async (
   return minio().getObject(bucket, name);
 };
 
-// var metaData = {
+// { // metaData
 //   'Content-Type': 'text/plain',
 //   'X-Amz-Meta-Testing': 1234,
 //   example: 5678,
@@ -59,7 +62,7 @@ export const putObject = async (
     name: string;
     size?: number;
     bucket?: string;
-    meta?: Minio.ItemBucketMetadata;
+    meta?: ItemBucketMetadata;
   },
 ) => {
   const { size, name, bucket = 'zeabur', meta } = params;
