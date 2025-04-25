@@ -46,6 +46,15 @@ export interface IEnv {
   RESEND_API_KEY?: string;
   /** Resend 发件人邮箱 */
   RESEND_FROM_EMAIL?: string;
+
+  /** S3 是否启用SSL */
+  S3_USE_SSL?: 'true' | 'false';
+  /** S3 域名 */
+  S3_ENDPOINT?: string;
+  /** S3 访问密钥 */
+  S3_ACCESS_KEY?: string;
+  /** S3 密钥 */
+  S3_SECRET_KEY?: string;
 }
 
 /** 拓展`global`属性 */

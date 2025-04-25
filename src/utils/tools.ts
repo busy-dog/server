@@ -132,23 +132,6 @@ export const isEmptyValue = (
   return false;
 };
 
-export const iSrc = (
-  src:
-    | string
-    | {
-        host: string;
-        pathname: string;
-      },
-  params?: unknown,
-) =>
-  [
-    (() => {
-      if (isString(src)) return src;
-      return `${src.host}${src.pathname}`;
-    })(),
-    iSearchParams(params),
-  ].join('?');
-
 /**
  * Constructs and returns a URLSearchParams object based on the provided initialization data.
  * Supports initializing with various types: URLSearchParams, string, string arrays, and plain objects.
@@ -183,3 +166,18 @@ export function iSearchParams(init: unknown) {
   }
   return;
 }
+
+export const isTrueString = (data: unknown): data is 'true' => {
+  if (!isString(data)) return false;
+  return data.trim().toLowerCase() === 'true';
+};
+
+export const isFalseString = (data: unknown): data is 'false' => {
+  if (!isString(data)) return false;
+  return data.trim().toLowerCase() === 'false';
+};
+
+export const isBooleanString = (data: unknown): data is 'true' | 'false' => {
+  if (!isString(data)) return false;
+  return isFalseString(data) || isTrueString(data);
+};

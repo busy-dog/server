@@ -8,3 +8,4 @@ export const destroy = async () => {
 
 export * from './ioredis';
 export * from './postgre';
+export * from './schemas';

@@ -24,6 +24,7 @@
   },
   "files.associations": {
     "*.env": "ini",
+    "*.env.*": "ini",
     "*.html": "ejs"
   },
   "explorer.fileNesting.enabled": true,
@@ -35,6 +36,12 @@
     "package.json": "package.json.*, pnpm-*, .npmrc, .nvmrc",
     "tsconfig.json": "tsconfig*, *.d.ts",
     "drizzle.config.ts": "drizzle*"
+  },
+  "material-icon-theme.files.associations": {
+    "*.env": "console",
+    ".env.keys": "console",
+    ".env.local": "console",
+    "*.env.*": "console"
   },
   "[svg]": {
     "editor.formatOnSave": true,

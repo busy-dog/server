@@ -3,15 +3,14 @@
  */
 
 import { serve } from '@hono/node-server';
+
 import dayjs from 'dayjs';
 
-import { app } from './app';
-import { crons } from './crons';
-import { report, responder } from './helpers';
+import { app } from 'src/apps';
+import { crons } from 'src/crons';
+import { report } from 'src/utils';
 
 crons.start();
-
-app.onError(responder.error);
 
 const server = serve({
   fetch: app.fetch,
