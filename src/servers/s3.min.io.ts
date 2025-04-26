@@ -5,7 +5,7 @@ import { Client } from 'minio';
 import { isNullish } from 'remeda';
 import { z } from 'zod';
 
-import { isTrueString } from 'src/utils';
+import { foldAsArrayBuffer, isTrueString } from 'src/utils';
 
 const minio = (() => {
   const store = {
@@ -36,6 +36,8 @@ const minio = (() => {
   };
 })();
 
+minio();
+
 export const getBuckets = () => minio().listBuckets();
 
 export const getObject = async (
@@ -48,7 +50,7 @@ export const getObject = async (
   if (!(await minio().bucketExists(bucket))) {
     throw new Error('Bucket ' + bucket + 'is not exists.');
   }
-  return minio().getObject(bucket, name);
+  return foldAsArrayBuffer(await minio().getObject(bucket, name));
 };
 
 // { // metaData

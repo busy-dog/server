@@ -40,7 +40,7 @@ const app = new Hono<AppEnv>()
   .route('/user', iSysUserApp)
   .route('/member', iMemberApp)
   .route('/github', iGithubApp)
-  .route('/train-record', iTrainRecordApp);
+  .route('/member/train-record', iTrainRecordApp);
 
 export type App = typeof app;
 

@@ -8,6 +8,7 @@ import { COOKIE_PRIFIX, COOKIE_SESSION_NAME } from 'src/constants';
 import { redis } from 'src/databases';
 import { isNonEmptyString, report, safe } from 'src/utils';
 
+import { HTTPException } from 'hono/http-exception';
 import * as jwt from './jwt';
 
 export interface SessionValue {
@@ -41,6 +42,20 @@ export const get = async (ctx: Context | string) => {
   const key = [SESSION_PREFIX, id].join(':');
   const string = await redis[0].get(key);
   return isString(string) ? (parse(string) as SessionValue) : null;
+};
+
+/**
+ * 获取 Session Value
+ */
+export const getWithAuth = async (ctx: Context | string) => {
+  const id = await over(ctx);
+  const parse = safe(JSON.parse);
+  const key = [SESSION_PREFIX, id].join(':');
+  const string = await redis[0].get(key);
+  if (!isString(string)) {
+    throw new HTTPException(401, { message: 'Unauthorized' });
+  }
+  return parse(string) as SessionValue;
 };
 
 /**
