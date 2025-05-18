@@ -6,8 +6,9 @@ import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 
+import { respr } from 'src/helpers';
+
 import { app as iGithubApp } from './github';
-import { respr } from './helpers';
 import { app as iMemberApp } from './member';
 import { middlewares } from './middlewares';
 import { app as iOTPApp } from './otp';
@@ -43,6 +44,8 @@ const app = new Hono<AppEnv>()
   .route('/member/train-record', iTrainRecordApp);
 
 export type App = typeof app;
+
+export type * from './types';
 
 app.onError(respr.error);
 

@@ -1,3 +1,5 @@
+import type { SQL } from 'drizzle-orm';
+import { eq, or } from 'drizzle-orm';
 import {
   char,
   index,
@@ -5,10 +7,22 @@ import {
   uniqueIndex,
   varchar,
 } from 'drizzle-orm/pg-core';
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from 'drizzle-zod';
+
+import { isNullish, isString } from 'remeda';
+import { v7 } from 'uuid';
+
+import type { GithubUserInfo } from 'src/helpers';
+import { compact, isNonEmptyArray, isScalar } from 'src/utils';
 
 import { columns } from '../helpers';
+import { db } from '../postgre';
 
-export const users = pgTable(
+const table = pgTable(
   'users',
   {
     id: char('id', { length: 36 }).primaryKey(),
@@ -31,6 +45,88 @@ export const users = pgTable(
   ],
 );
 
-export type UserInfoModel = typeof users.$inferInsert;
+export type UserInfoModel = typeof table.$inferInsert;
 
-export type UserSelectModel = Partial<typeof users.$inferSelect>;
+export type UserSelectModel = Partial<typeof table.$inferSelect>;
+
+const schema = {
+  select: createSelectSchema(table),
+  insert: createInsertSchema(table),
+  update: createUpdateSchema(table),
+};
+
+const exist = async ({
+  id,
+  email,
+  mobile,
+  googleId,
+  githubId,
+}: UserSelectModel) =>
+  isNonEmptyArray(
+    await db.common
+      .select()
+      .from(table)
+      .where(
+        or(
+          ...compact([
+            isString(id) && eq(table.id, id),
+            isString(email) && eq(table.email, email),
+            isString(mobile) && eq(table.mobile, mobile),
+            isScalar(googleId) && eq(table.googleId, googleId),
+            isScalar(githubId) && eq(table.githubId, githubId),
+          ]),
+        )!,
+      ),
+  );
+
+const create = async ({
+  row,
+  github,
+}: {
+  row?: UserInfoModel;
+  github?: GithubUserInfo;
+}) => {
+  const value = (() => {
+    if (row) return row;
+    if (github)
+      return {
+        id: v7(),
+        status: 'active',
+        creator: 'github',
+        name: github.name ?? github.login,
+        email: github.email ?? null,
+        mobile: github.login ?? null,
+        avatar: github.avatar_url ?? null,
+        githubId: github.id?.toString() ?? null,
+      };
+  })();
+
+  if (isNullish(value)) {
+    throw new Error('No user info provided');
+  }
+  return db.common.insert(table).values(schema.insert.parse(value));
+};
+
+const query = async (selector?: SQL) => {
+  const rows = await db.common.select().from(table).where(selector);
+
+  if (rows.length > 1) {
+    throw new Error('Multiple users found');
+  }
+  if (rows.length === 0 || isNullish(rows[0])) {
+    throw new Error('No user info provided');
+  }
+  return rows[0];
+};
+
+const update = async (info: Partial<UserInfoModel>, selector: SQL) =>
+  db.common.update(table).set(schema.update.parse(info)).where(selector);
+
+export const users = {
+  exist,
+  query,
+  create,
+  update,
+  schema,
+  table,
+};

@@ -3,9 +3,8 @@ import { HTTPException } from 'hono/http-exception';
 
 import { isString } from 'remeda';
 
+import { jwt, session } from 'src/helpers';
 import { report } from 'src/utils';
-
-import { jwt, session } from '../helpers';
 
 /**
  * 认证中间件
@@ -16,17 +15,17 @@ export const iAuth = () => {
   return createMiddleware(async (ctx, next) => {
     const { url } = ctx.req;
     const { pathname } = new URL(url);
-
     const res = await session.get(ctx);
     const api = pathname.replace('/api', '');
     const { jwt: code } = (await jwt.find(ctx)) ?? {};
     if (
       // 白名单
       api.startsWith('/github') ||
-      api.startsWith('/signin') ||
       api.startsWith('/oauth2') ||
+      api.startsWith('/captcha') ||
       api.startsWith('/user/oauth2') ||
-      api.startsWith('/captcha')
+      api.startsWith('/user/signin') ||
+      api.startsWith('/member/signin')
     ) {
       report.info(`Spik auth:${api}`, { name: 'Auth' });
     } else if (res?.id) {

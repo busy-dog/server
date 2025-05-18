@@ -1,14 +1,14 @@
 import type { Context } from 'hono';
 import { getCookie, setCookie } from 'hono/cookie';
-import { nanoid } from 'nanoid';
+import { HTTPException } from 'hono/http-exception';
 
 import { isString, merge } from 'remeda';
+import { v7 } from 'uuid';
 
 import { COOKIE_PRIFIX, COOKIE_SESSION_NAME } from 'src/constants';
 import { redis } from 'src/databases';
 import { isNonEmptyString, report, safe } from 'src/utils';
 
-import { HTTPException } from 'hono/http-exception';
 import * as jwt from './jwt';
 
 export interface SessionValue {
@@ -96,7 +96,7 @@ export const clear = async (ctx: Context | string) => {
  * 创建 Session ID
  */
 export const create = (ctx: Context) => {
-  const id = nanoid();
+  const id = v7();
   setCookie(ctx, name, id);
   report.info(`Set cookie:${id}`, { name: 'session' });
   return id;

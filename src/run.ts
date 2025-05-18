@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import { app } from 'src/apps';
 import { crons } from 'src/crons';
 import { report } from 'src/utils';
+import { destroy } from './databases';
 
 crons.start();
 
@@ -26,4 +27,9 @@ server.addListener('listening', () => {
 
 server.addListener('close', async () => {
   report.info(`Close server`);
+});
+
+process.once('exit', () => {
+  destroy();
+  server.close();
 });

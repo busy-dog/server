@@ -1,6 +1,7 @@
 import { hex } from 'ansis';
 import type { Redis } from 'ioredis';
-import { nanoid } from 'nanoid';
+import { v7 } from 'uuid';
+
 import { colors } from 'src/constants';
 
 export interface DistributedLockParams {
@@ -10,7 +11,7 @@ export interface DistributedLockParams {
 export class DistributedLock {
   key: string;
 
-  id = nanoid();
+  id = v7();
 
   private ttl = 10000;
 

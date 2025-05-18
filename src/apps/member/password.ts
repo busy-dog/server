@@ -2,14 +2,14 @@ import { Hono } from 'hono';
 import { validator } from 'hono/validator';
 
 import { eq } from 'drizzle-orm';
+
 import { isString } from 'remeda';
 import { z } from 'zod';
 
-import { tables } from 'src/databases';
-import { svrs } from 'src/servers';
+import { members } from 'src/databases';
+import { captcha, respr, session } from 'src/helpers';
 import { pcrypt } from 'src/utils';
 
-import { respr, session } from '../helpers';
 import type { AppEnv } from '../types';
 
 const app = new Hono<AppEnv>();
@@ -32,9 +32,9 @@ app.patch(
 
     if (!isString(id)) throw new Error('User not found');
 
-    const { email } = await svrs.members.query(eq(tables.members.id, id));
+    const { email } = await members.query(eq(members.table.id, id));
     if (!isString(email)) throw new Error('Plz bind email');
-    const isMatch = await svrs.captcha.isMatch({ email, ...data });
+    const isMatch = await captcha.isMatch({ email, ...data });
     if (isMatch) return { id, ...data };
     throw new Error('Invalid captcha');
   }),
@@ -43,11 +43,11 @@ app.patch(
     const salt = pcrypt.createSalt();
     const { password, id } = req.valid('json');
     const hashed = pcrypt.createHash(password, salt);
-    const res = await svrs.members.update(
+    const res = await members.update(
       {
         password: pcrypt.pack(hashed, salt),
       },
-      eq(tables.members.id, id),
+      eq(members.table.id, id),
     );
     return json(respr.decorator(res));
   },

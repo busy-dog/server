@@ -1,15 +1,14 @@
 import { validator } from 'hono/validator';
 
 import { eq } from 'drizzle-orm';
+
 import { isString } from 'remeda';
 import { z } from 'zod';
 
-import { tables } from 'src/databases';
-import { svrs } from 'src/servers';
+import { users } from 'src/databases';
+import { captcha, respr, session } from 'src/helpers';
 
-import { respr, session } from '../helpers';
 import { middlewares } from '../middlewares';
-
 import { app } from './app';
 
 /**
@@ -36,7 +35,7 @@ app.post(
   ),
   async ({ req, json }) => {
     const data = req.valid('json');
-    const res = await svrs.captcha.create(data);
+    const res = await captcha.create(data);
     return json(respr.decorator(res));
   },
 );
@@ -55,13 +54,13 @@ app.put(
   async (ctx) => {
     const { req, json } = ctx;
     const data = req.valid('json');
-    if (!(await svrs.captcha.isMatch(data))) {
+    if (!(await captcha.isMatch(data))) {
       throw new Error('Invalid captcha');
     }
     const { email } = data;
     const { id } = (await session.get(ctx)) ?? {};
     if (!isString(id)) throw new Error('User not found');
-    const res = await svrs.users.update({ email }, eq(tables.users.id, id));
+    const res = await users.update({ email }, eq(users.table.id, id));
     return json(respr.decorator(res));
   },
 );

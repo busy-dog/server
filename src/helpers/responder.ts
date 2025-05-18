@@ -6,7 +6,7 @@ import { ZodError } from 'zod';
 
 import { ensure, report } from 'src/utils';
 
-import type { AppEnv } from '../types';
+import type { AppEnv } from 'src/apps';
 
 const isZodError = (err: unknown): err is ZodError => {
   return err instanceof ZodError;

@@ -36,8 +36,6 @@ const minio = (() => {
   };
 })();
 
-minio();
-
 export const getBuckets = () => minio().listBuckets();
 
 export const getObject = async (

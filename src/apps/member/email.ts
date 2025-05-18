@@ -2,13 +2,13 @@ import { Hono } from 'hono';
 import { validator } from 'hono/validator';
 
 import { eq } from 'drizzle-orm';
+
 import { isString, pipe } from 'remeda';
 import { z } from 'zod';
 
-import { tables } from 'src/databases';
-import { svrs } from 'src/servers';
+import { members } from 'src/databases';
+import { captcha, respr, session } from 'src/helpers';
 
-import { respr, session } from '../helpers';
 import { middlewares } from '../middlewares';
 import type { AppEnv } from '../types';
 
@@ -37,7 +37,7 @@ app.post(
       .parse(value),
   ),
   async ({ req, json }) =>
-    json(respr.decorator(await pipe(req.valid('json'), svrs.captcha.create))),
+    json(respr.decorator(await pipe(req.valid('json'), captcha.create))),
 );
 
 // 绑定邮箱
@@ -54,14 +54,14 @@ app.put(
   async (ctx) => {
     const { req, json } = ctx;
     const data = req.valid('json');
-    if (!(await svrs.captcha.isMatch(data))) {
+    if (!(await captcha.isMatch(data))) {
       throw new Error('Invalid captcha');
     }
     const { email } = data;
     const { id } = (await session.get(ctx)) ?? {};
     if (!isString(id)) throw new Error('User not found');
-    const selector = eq(tables.members.id, id);
-    const res = await svrs.members.update({ email }, selector);
+    const selector = eq(members.table.id, id);
+    const res = await members.update({ email }, selector);
     return json(respr.decorator(res));
   },
 );

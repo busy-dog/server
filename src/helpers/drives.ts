@@ -1,7 +1,6 @@
 import Driver, { fetch2curl } from '@busymango/fetch-driver';
-import { compact } from 'src/utils';
 
-import { report } from 'src/utils';
+import { compact, report } from 'src/utils';
 
 const { drive, request } = new Driver([
   async (ctx, next) => {

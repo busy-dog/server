@@ -1,7 +1,11 @@
 import { Hono } from 'hono';
 
-import { svrs } from 'src/servers';
-import { respr, session } from '../helpers';
+import { v7 } from 'uuid';
+
+import { trainRec } from 'src/databases';
+import { respr, s3, session } from 'src/helpers';
+
+import { eq } from 'drizzle-orm';
 import { middlewares } from '../middlewares';
 import type { AppEnv } from '../types';
 
@@ -15,12 +19,57 @@ app.post(
   }),
   async (ctx) => {
     const { json, req } = ctx;
-    const file = await req.arrayBuffer();
-    const { id } = await session.getWithAuth(ctx);
-    const data = await svrs.s3.putObject(Buffer.from(file), {
-      name: id,
+    const data = await req.formData();
+
+    const file = data.get('file');
+    if (!(file instanceof File)) {
+      throw new Error('File is required');
+    }
+
+    const deviceId = req.header('X-Device-Id');
+
+    const buffer = await file.arrayBuffer();
+
+    const { id: memberId } = await session.getWithAuth(ctx);
+
+    const disposition = req.header('Content-Disposition');
+
+    if (!disposition) {
+      throw new Error('Content-Disposition header is required');
+    }
+
+    const rowId = v7();
+
+    await trainRec.create({
+      deviceId,
+      memberId,
+      id: rowId,
+      creator: memberId,
+      status: 'pending',
+      fileName: file.name,
+      fileSize: buffer.byteLength,
     });
-    return json(respr.decorator(data));
+
+    const res = await s3.putObject(Buffer.from(buffer), {
+      name: file.name,
+      size: buffer.byteLength,
+      meta: {
+        owner: memberId,
+        disposition,
+      },
+    });
+
+    const body = await trainRec.update(
+      {
+        updater: memberId,
+        s3Key: res.etag,
+        status: 'synced',
+        syncAt: new Date(),
+      },
+      eq(trainRec.table.id, rowId),
+    );
+
+    return json(respr.decorator(body));
   },
 );
 
@@ -34,7 +83,7 @@ app.get(
     const { body, header } = ctx;
     header('Content-Type', 'text/plain');
     const { id } = await session.getWithAuth(ctx);
-    const buffer = await svrs.s3.getObject(id);
+    const buffer = await s3.getObject(id);
     return body(buffer);
   },
 );

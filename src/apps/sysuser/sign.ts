@@ -1,18 +1,18 @@
 import { setCookie } from 'hono/cookie';
 import { validator } from 'hono/validator';
 
-import dayjs from 'dayjs';
 import { eq, or } from 'drizzle-orm';
+
+import dayjs from 'dayjs';
 import { authenticator } from 'otplib';
 import { isString } from 'remeda';
 import { v7 } from 'uuid';
 import { z } from 'zod';
 
-import { schemas, tables } from 'src/databases';
-import { svrs } from 'src/servers';
+import { users } from 'src/databases';
+import { captcha, jwt, respr, session } from 'src/helpers';
 import { pcrypt } from 'src/utils';
 
-import { jwt, respr, session } from '../helpers';
 import { middlewares } from '../middlewares';
 
 import { app } from './app';
@@ -55,8 +55,8 @@ app.post(
     const account = data.mobile ?? data.email;
     if (!isString(account)) throw new Error('"Account" is required');
 
-    const info = await svrs.users.query(
-      or(eq(tables.users.email, account), eq(tables.users.mobile, account)),
+    const info = await users.query(
+      or(eq(users.table.email, account), eq(users.table.mobile, account)),
     );
     if (!info) throw new Error('User not found');
 
@@ -123,7 +123,7 @@ app.post(
   ),
   async ({ req, json }) => {
     const data = req.valid('json');
-    const res = await svrs.captcha.create(data);
+    const res = await captcha.create(data);
     return json(respr.decorator(res));
   },
 );
@@ -153,18 +153,18 @@ app.post(
       .parse(value);
 
     if (isString(email)) {
-      if (await svrs.users.exist({ email })) {
+      if (await users.exist({ email })) {
         throw new Error('Email is already exists');
       }
     }
 
     if (isString(mobile)) {
-      if (await svrs.users.exist({ mobile })) {
+      if (await users.exist({ mobile })) {
         throw new Error('Mobile is already exists');
       }
     }
 
-    const isMatch = await svrs.captcha.isMatch({
+    const isMatch = await captcha.isMatch({
       email,
       mobile,
       captcha: others.captcha,
@@ -175,17 +175,17 @@ app.post(
     const salt = pcrypt.createSalt();
     const hashed = pcrypt.createHash(password, salt);
 
-    return schemas.users.insert.parse({
+    return {
       email,
       mobile,
       id: v7(),
       password: pcrypt.pack(hashed, salt),
       ...others,
-    });
+    };
   }),
   async ({ req, json }) => {
     const row = req.valid('json');
-    const res = await svrs.users.create({ row });
+    const res = await users.create({ row });
     return json(respr.decorator(res));
   },
 );
