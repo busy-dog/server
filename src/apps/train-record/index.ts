@@ -5,7 +5,9 @@ import { v7 } from 'uuid';
 import { trainRec } from 'src/databases';
 import { respr, s3, session } from 'src/helpers';
 
+import dayjs from 'dayjs';
 import { eq } from 'drizzle-orm';
+import { z } from 'zod/v4';
 import { middlewares } from '../middlewares';
 import type { AppEnv } from '../types';
 
@@ -21,22 +23,16 @@ app.post(
     const { json, req } = ctx;
     const data = await req.formData();
 
-    const file = data.get('file');
-    if (!(file instanceof File)) {
-      throw new Error('File is required');
+    const txt = data.get('txt');
+    if (!(txt instanceof File)) {
+      throw new Error('Text file is required');
     }
 
     const deviceId = req.header('X-Device-Id');
 
-    const buffer = await file.arrayBuffer();
+    const buffer = await txt.arrayBuffer();
 
     const { id: memberId } = await session.getWithAuth(ctx);
-
-    const disposition = req.header('Content-Disposition');
-
-    if (!disposition) {
-      throw new Error('Content-Disposition header is required');
-    }
 
     const rowId = v7();
 
@@ -46,16 +42,17 @@ app.post(
       id: rowId,
       creator: memberId,
       status: 'pending',
-      fileName: file.name,
+      fileName: txt.name,
       fileSize: buffer.byteLength,
     });
 
     const res = await s3.putObject(Buffer.from(buffer), {
-      name: file.name,
+      name: txt.name ?? dayjs().format('YYYY.MM.DD.HHmmss'),
       size: buffer.byteLength,
       meta: {
         owner: memberId,
-        disposition,
+        type: txt.type,
+        lastModified: txt.lastModified,
       },
     });
 
@@ -79,11 +76,18 @@ app.get(
     quota: 60,
     window: 1 * 60 * 1000, // 1 minutes
   }),
+  middlewares.iZod(
+    'json',
+    z.object({
+      s3Key: z.string(),
+    }),
+  ),
   async (ctx) => {
-    const { body, header } = ctx;
+    const { body, header, req } = ctx;
+    const { s3Key } = req.valid('json');
     header('Content-Type', 'text/plain');
-    const { id } = await session.getWithAuth(ctx);
-    const buffer = await s3.getObject(id);
+    const buffer = await s3.getObject(s3Key);
+
     return body(buffer);
   },
 );

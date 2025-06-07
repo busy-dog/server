@@ -1,5 +1,6 @@
-import { dicts } from './src/schemas/dicts';
-import { members } from './src/schemas/members';
-import { users } from './src/schemas/users';
+import * as databases from './src/databases/';
 
-export { dicts, members, users };
+export const dicts = databases.dicts.table;
+export const members = databases.members.table;
+export const users = databases.users.table;
+export const trainRec = databases.trainRec.table;

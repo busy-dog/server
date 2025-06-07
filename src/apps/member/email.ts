@@ -1,4 +1,3 @@
-import { Hono } from 'hono';
 import { validator } from 'hono/validator';
 
 import { eq } from 'drizzle-orm';
@@ -10,9 +9,7 @@ import { members } from 'src/databases';
 import { captcha, respr, session } from 'src/helpers';
 
 import { middlewares } from '../middlewares';
-import type { AppEnv } from '../types';
-
-const app = new Hono<AppEnv>();
+import { app } from './app';
 
 /**
  * 发送邮箱验证码

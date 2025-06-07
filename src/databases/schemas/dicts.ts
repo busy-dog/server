@@ -1,8 +1,13 @@
 import { boolean, pgTable, smallint, text, varchar } from 'drizzle-orm/pg-core';
 
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from 'drizzle-zod';
 import { columns } from '../helpers';
 
-export const dicts = pgTable('dictionary', {
+export const table = pgTable('dictionary', {
   path: varchar('path', { length: 255 }).primaryKey(),
   parent: varchar('parent', { length: 36 }),
   code: varchar('code', { length: 15 }),
@@ -17,6 +22,17 @@ export const dicts = pgTable('dictionary', {
   ...columns.timestamps,
 });
 
-export type DictInfoModel = typeof dicts.$inferInsert;
+export type DictInfoModel = typeof table.$inferInsert;
 
-export type DictSelectModel = Partial<typeof dicts.$inferSelect>;
+export type DictSelectModel = Partial<typeof table.$inferSelect>;
+
+const schema = {
+  select: createSelectSchema(table),
+  insert: createInsertSchema(table),
+  update: createUpdateSchema(table),
+};
+
+export const dicts = {
+  table,
+  schema,
+};
