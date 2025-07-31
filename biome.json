@@ -67,6 +67,7 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
+      "!dist/**/*",
       "!**/node_modules/**/*",
       "!**/global.d.ts"
     ]
