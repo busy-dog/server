@@ -2,7 +2,8 @@
   "name": "@busymango/server",
   "scripts": {
     "dev": "dotenvx run -- tsx watch src/run.ts",
-    "build": "dotenvx run -- tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json",
+    "start": "dotenvx run -- node dist/run.js",
     "local": "dotenvx run -f .env.local -- tsx watch src/run.ts",
     "test": "dotenvx run -- tsx --test $(find test -type f -name '*.spec.ts')",
     "format": "biome check --write . && biome format --write --colors=force --verbose .",
@@ -15,6 +16,7 @@
   "type": "module",
   "dependencies": {
     "@busymango/fetch-driver": "^0.5.0",
+    "@dotenvx/dotenvx": "^1.48.4",
     "@hono/node-server": "^1.14.2",
     "ansis": "^4.0.0",
     "cron": "^4.1.0",
@@ -35,7 +37,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.1.2",
-    "@dotenvx/dotenvx": "^1.48.3",
     "@types/node": "^20.12.2",
     "commander": "^13.1.0",
     "drizzle-kit": "^0.31.4",

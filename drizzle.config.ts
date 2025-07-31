@@ -1,12 +1,12 @@
 import { defineConfig } from 'drizzle-kit';
 
 const {
-  POSTGRESQL_SSL,
-  POSTGRESQL_HOST,
-  POSTGRESQL_PASSWORD,
-  POSTGRESQL_USER,
-  POSTGRESQL_DATABASE,
-  POSTGRESQL_PORT = '3306',
+  POSTGRE_SSL,
+  POSTGRES_HOST,
+  POSTGRES_PASSWORD,
+  POSTGRES_USERNAME,
+  POSTGRES_DATABASE,
+  POSTGRES_PORT = '3306',
 } = process.env;
 
 export default defineConfig({
@@ -14,13 +14,13 @@ export default defineConfig({
   dialect: 'postgresql',
   schema: './drizzle.ts',
   dbCredentials: {
-    user: POSTGRESQL_USER,
-    host: POSTGRESQL_HOST,
-    port: Number(POSTGRESQL_PORT),
-    password: POSTGRESQL_PASSWORD,
-    database: POSTGRESQL_DATABASE,
+    user: POSTGRES_USERNAME,
+    host: POSTGRES_HOST,
+    port: Number(POSTGRES_PORT),
+    password: POSTGRES_PASSWORD,
+    database: POSTGRES_DATABASE,
     ssl:
-      POSTGRESQL_SSL === 'true'
+      POSTGRE_SSL === 'true'
         ? {
             rejectUnauthorized: false,
           }

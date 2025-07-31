@@ -15,9 +15,6 @@ RUN pnpm install --frozen-lockfile && \
     ls -la dist/ && \
     pnpm prune --prod
 
-ENV CI='true'
-ENV HUSKY=0
-
 FROM base AS runner
 WORKDIR /app
 
@@ -34,4 +31,4 @@ COPY --from=builder --chown=hono:nodejs /app/package.json /app/package.json
 USER hono
 EXPOSE 3000
 
-CMD ["dotenvx", "run", "--", "node", "/app/dist/run.js"]
+CMD ["pnpm", "start"]

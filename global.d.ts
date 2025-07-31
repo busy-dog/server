@@ -9,17 +9,17 @@ export interface IEnv {
   AES_KEY: string;
 
   /** POSTGRESQL(public) 是否启用SSL */
-  POSTGRESQL_SSL?: string;
+  POSTGRE_SSL?: string;
   /** POSTGRESQL(public) 用户 */
-  POSTGRESQL_USER: string;
+  POSTGRES_USERNAME: string;
   /** POSTGRESQL(public) 地址 */
-  POSTGRESQL_HOST: string;
+  POSTGRES_HOST: string;
   /** POSTGRESQL(public) 端口 */
-  POSTGRESQL_PORT: string;
+  POSTGRES_PORT: string;
   /** POSTGRESQL(public) 密码 */
-  POSTGRESQL_PASSWORD: string;
+  POSTGRES_PASSWORD: string;
   /** POSTGRESQL(public) 数据库 */
-  POSTGRESQL_DATABASE: string;
+  POSTGRES_DATABASE: string;
 
   /** REDIS(public) 是否启用TLS */
   REDIS_TLS?: string;

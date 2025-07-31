@@ -3,12 +3,12 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { ensure, report } from 'src/utils';
 
 const {
-  POSTGRESQL_SSL: isSSL,
-  POSTGRESQL_HOST: host,
-  POSTGRESQL_USER: user,
-  POSTGRESQL_PORT: port,
-  POSTGRESQL_DATABASE: database,
-  POSTGRESQL_PASSWORD: password,
+  POSTGRE_SSL: isSSL,
+  POSTGRES_HOST: host,
+  POSTGRES_USERNAME: user,
+  POSTGRES_PORT: port,
+  POSTGRES_DATABASE: database,
+  POSTGRES_PASSWORD: password,
 } = process.env;
 
 export class AnsisLogger implements Logger {
