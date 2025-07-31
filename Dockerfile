@@ -5,7 +5,8 @@ FROM base AS builder
 # RUN apk add --no-cache gcompat
 WORKDIR /app
 
-COPY package*json pnpm-lock.yaml tsconfig.json src ./
+COPY .env package*json pnpm-lock.yaml src global.d.ts ./
+COPY tsconfig.build.json ./tsconfig.json
 
 RUN pnpm install --frozen-lockfile && \
     pnpm run build && \
