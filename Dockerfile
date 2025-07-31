@@ -1,4 +1,4 @@
-FROM guergeiro/pnpm:22-10 AS base
+FROM guergeiro/pnpm:22-10-alpine AS base
 
 FROM base AS builder
 
