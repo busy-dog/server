@@ -5,11 +5,14 @@ FROM base AS builder
 # RUN apk add --no-cache gcompat
 WORKDIR /app
 
-COPY .env *.d.ts package*json pnpm-lock.yaml src scripts ./
+COPY *.d.ts src scripts ./
+COPY .npmrc .env pnpm-lock.yaml package*json ./
 COPY tsconfig.build.json ./tsconfig.json
 
 RUN pnpm install --frozen-lockfile && \
     pnpm run build && \
+    ls -la && \
+    ls -la dist/ && \
     pnpm prune --prod
 
 ENV CI='true'
