@@ -18,6 +18,9 @@ node_modules/
 .env.keys
 .env.local
 
+# build
+dist
+
 # logs
 logs/
 *.log

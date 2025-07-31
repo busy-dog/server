@@ -1,5 +1,6 @@
 import type { ValidationTargets } from 'hono';
 import { validator } from 'hono/validator';
+
 import { keys, merge, pipe, reduce } from 'remeda';
 import type { PlainObject } from 'src/utils';
 import type { core } from 'zod/v4';

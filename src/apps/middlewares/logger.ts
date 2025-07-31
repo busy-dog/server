@@ -1,7 +1,7 @@
-import { hex } from 'ansis';
 import type { MiddlewareHandler } from 'hono';
 import { createMiddleware } from 'hono/factory';
 
+import { hex } from 'ansis';
 import { colors } from 'src/constants';
 import { report } from 'src/utils';
 

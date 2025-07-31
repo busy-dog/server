@@ -2,8 +2,9 @@
  * @docs https://github.com/kelektiv/node-cron
  */
 
-import { CronJob } from 'cron';
 import type { Hono } from 'hono';
+
+import { CronJob } from 'cron';
 
 import { iPostgresqlChecker, iRedisChecker } from './health';
 

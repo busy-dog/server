@@ -1,6 +1,5 @@
 import type { Logger } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
-
 import { ensure, report } from 'src/utils';
 
 const {

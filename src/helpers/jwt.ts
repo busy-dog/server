@@ -6,7 +6,6 @@ import * as jwt from 'hono/jwt';
 import type { JWTPayload } from 'hono/utils/jwt/types';
 
 import { isError, isString } from 'remeda';
-
 import { redis } from 'src/databases';
 import { aes, isNonEmptyString, report } from 'src/utils';
 

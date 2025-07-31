@@ -35,7 +35,24 @@
   "assist": {
     "actions": {
       "source": {
-        "organizeImports": "on"
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              [":NODE:", ":BUN:"],
+              ":BLANK_LINE:",
+              ["hono", "hono/**", "@hono/**"],
+              ":BLANK_LINE:",
+              ":PACKAGE:",
+              ":BLANK_LINE:",
+              ":ALIAS:",
+              ":BLANK_LINE:",
+              "src/**",
+              ":BLANK_LINE:",
+              ":PATH:"
+            ]
+          }
+        }
       }
     }
   },

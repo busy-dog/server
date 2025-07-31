@@ -2,7 +2,6 @@ import type { KeyPairSyncResult } from 'node:crypto';
 import { generateKeyPairSync } from 'node:crypto';
 
 import { isNullish, isString } from 'remeda';
-
 import { regexs } from 'src/constants';
 import { redis } from 'src/databases';
 

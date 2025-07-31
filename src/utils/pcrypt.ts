@@ -14,6 +14,7 @@
 
 import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import { isArrayBufferView } from 'node:util/types';
+
 import { isString } from 'remeda';
 
 export const createSalt = () => randomBytes(16).toString('hex');

@@ -1,10 +1,10 @@
 import { boolean, pgTable, smallint, text, varchar } from 'drizzle-orm/pg-core';
-
 import {
   createInsertSchema,
   createSelectSchema,
   createUpdateSchema,
 } from 'drizzle-zod';
+
 import { columns } from '../helpers';
 
 export const table = pgTable('dictionary', {

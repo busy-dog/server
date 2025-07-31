@@ -14,10 +14,9 @@ import {
   createSelectSchema,
   createUpdateSchema,
 } from 'drizzle-zod';
-
 import { isNullish, isString } from 'remeda';
-
 import { compact, isNonEmptyArray, isScalar } from 'src/utils';
+
 import { columns } from '../helpers';
 import { db } from '../postgre';
 

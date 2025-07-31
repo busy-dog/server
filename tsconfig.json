@@ -3,6 +3,7 @@
   "display": "react-app",
   "compileOnSave": true,
   "compilerOptions": {
+    "outDir": "./dist",
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -16,9 +17,9 @@
     "forceConsistentCasingInFileNames": true,
     "allowUnreachableCode": false,
     "types": ["node"],
-    "baseUrl": ".",
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
+    "jsxImportSource": "hono/jsx",
+    "baseUrl": "."
   },
   "include": [
     "scripts/**/*",

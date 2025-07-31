@@ -12,7 +12,6 @@ import {
   createSelectSchema,
   createUpdateSchema,
 } from 'drizzle-zod';
-
 import { isNullish, isString } from 'remeda';
 import type { GithubUserInfo } from 'src/helpers';
 import { compact, isNonEmptyArray, isScalar } from 'src/utils';

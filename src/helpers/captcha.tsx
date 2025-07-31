@@ -5,7 +5,6 @@ import { timingSafeEqual } from 'hono/utils/buffer';
 
 import { isString } from 'remeda';
 import { Resend } from 'resend';
-
 import { redis } from 'src/databases';
 
 const { RESEND_API_KEY, RESEND_FROM_EMAIL } = process.env;

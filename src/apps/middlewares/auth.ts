@@ -2,7 +2,6 @@ import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 
 import { isString } from 'remeda';
-
 import { jwt, session } from 'src/helpers';
 import { report } from 'src/utils';
 
