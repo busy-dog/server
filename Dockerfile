@@ -31,4 +31,4 @@ COPY --from=builder --chown=hono:nodejs /app/package.json /app/package.json
 USER hono
 EXPOSE 3000
 
-CMD ["node", "/app/dist/run.js"]
+CMD ["dotenvx", "run", "--", "node", "/app/dist/run.js"]
