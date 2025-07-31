@@ -18,6 +18,9 @@ ENV HUSKY=0
 FROM base AS runner
 WORKDIR /app
 
+# Install dotenvx
+RUN curl -sfS https://dotenvx.sh/install.sh | sh
+
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 hono
 
