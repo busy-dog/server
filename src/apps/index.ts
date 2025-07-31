@@ -1,10 +1,8 @@
-import { Hono } from 'hono';
-
-import { cors } from 'hono/cors';
-
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 
 import { respr } from 'src/helpers';
 

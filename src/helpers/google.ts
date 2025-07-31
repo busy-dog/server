@@ -1,6 +1,5 @@
-import type { Context } from 'hono';
-
 import { google } from 'googleapis';
+import type { Context } from 'hono';
 
 const { OAuth2 } = google.auth;
 

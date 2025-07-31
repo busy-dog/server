@@ -1,8 +1,7 @@
+import { eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { validator } from 'hono/validator';
-
-import { eq } from 'drizzle-orm';
 
 import { authenticator } from 'otplib';
 import { isNullish, isString } from 'remeda';

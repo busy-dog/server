@@ -14,10 +14,9 @@ import {
 } from 'drizzle-zod';
 
 import { isNullish, isString } from 'remeda';
-import { v7 } from 'uuid';
-
 import type { GithubUserInfo } from 'src/helpers';
 import { compact, isNonEmptyArray, isScalar } from 'src/utils';
+import { v7 } from 'uuid';
 
 import { columns } from '../helpers';
 import { db } from '../postgre';

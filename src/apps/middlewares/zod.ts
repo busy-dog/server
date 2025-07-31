@@ -1,11 +1,9 @@
-import type { core } from 'zod/v4';
-
-import { ZodObject, parseAsync } from 'zod/v4';
-
 import type { ValidationTargets } from 'hono';
 import { validator } from 'hono/validator';
 import { keys, merge, pipe, reduce } from 'remeda';
 import type { PlainObject } from 'src/utils';
+import type { core } from 'zod/v4';
+import { parseAsync, ZodObject } from 'zod/v4';
 
 export const iZod = <
   T extends keyof ValidationTargets,

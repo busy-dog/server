@@ -3,10 +3,9 @@ import { Hono } from 'hono';
 import { validator } from 'hono/validator';
 
 import { isString } from 'remeda';
-import { z } from 'zod';
-
 import { users } from 'src/databases';
 import { github, session } from 'src/helpers';
+import { z } from 'zod';
 
 import type { AppEnv } from './types';
 

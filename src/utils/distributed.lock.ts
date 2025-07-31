@@ -1,8 +1,7 @@
 import { hex } from 'ansis';
 import type { Redis } from 'ioredis';
-import { v7 } from 'uuid';
-
 import { colors } from 'src/constants';
+import { v7 } from 'uuid';
 
 export interface DistributedLockParams {
   ttl?: number;
@@ -35,10 +34,9 @@ export class DistributedLock {
     console.info(hex(colors.amber)(this.msg(text)));
 
   private startAutoRenewal() {
-    const { key, redis, ttl } = this;
     this.interval = setInterval(() => {
-      redis.pexpire(key, ttl);
-    }, ttl / 2);
+      this.redis.pexpire(this.key, this.ttl);
+    }, this.ttl / 2);
   }
 
   acquire = async (): Promise<boolean> => {

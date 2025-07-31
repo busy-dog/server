@@ -2,11 +2,10 @@ import type { Context, ErrorHandler } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 
 import { isError, isNullish, isString, join, map, merge, pipe } from 'remeda';
-import { ZodError } from 'zod';
+import type { AppEnv } from 'src/apps';
 
 import { ensure, report } from 'src/utils';
-
-import type { AppEnv } from 'src/apps';
+import { ZodError } from 'zod';
 
 const isZodError = (err: unknown): err is ZodError => {
   return err instanceof ZodError;
