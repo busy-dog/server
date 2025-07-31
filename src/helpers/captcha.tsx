@@ -34,7 +34,7 @@ export const create = async (params: { email?: string }) => {
       5 * 60,
     );
 
-    return await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       to: email,
       subject: 'Captcha',
       from: `Captcha <${RESEND_FROM_EMAIL}>`,
@@ -44,6 +44,10 @@ export const create = async (params: { email?: string }) => {
         </div>
       ).toString(),
     });
+
+    if (error) throw error;
+
+    return data;
   }
 
   throw new Error('Email is required');

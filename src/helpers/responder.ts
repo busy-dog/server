@@ -6,9 +6,14 @@ import type { AppEnv } from 'src/apps';
 
 import { ensure, report } from 'src/utils';
 import { ZodError } from 'zod';
+import { z } from 'zod/v4';
+
+const isZodErrorV3 = (err: unknown): err is ZodError => {
+  return err instanceof ZodError;
+};
 
 const isZodError = (err: unknown): err is ZodError => {
-  return err instanceof ZodError;
+  return err instanceof z.ZodError;
 };
 
 export const decorator = <T>(
@@ -34,6 +39,13 @@ export const decorator = <T>(
 
   const error = (() => {
     if (isZodError(data)) {
+      return pipe(
+        data.issues,
+        map(({ path, message }) => `${path} ${message}`),
+        join(' & '),
+      );
+    }
+    if (isZodErrorV3(data)) {
       return pipe(
         data.errors,
         map(({ path, message }) => `${path} is ${message}`),

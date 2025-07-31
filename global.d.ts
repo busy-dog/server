@@ -5,7 +5,7 @@ export interface IEnv {
   PORT: string;
   /** 服务主机 */
   HOST: string;
-  /** AES 密钥 */
+  /** AES 密钥，用于加密和解密数据 */
   AES_KEY: string;
 
   /** POSTGRESQL(public) 是否启用SSL */

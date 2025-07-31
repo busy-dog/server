@@ -3,12 +3,12 @@ import { eq, or } from 'drizzle-orm';
 import { setCookie } from 'hono/cookie';
 import { validator } from 'hono/validator';
 import { authenticator } from 'otplib';
-import { isString } from 'remeda';
+import { isNullish, isString } from 'remeda';
 import { users } from 'src/databases';
 import { captcha, jwt, respr, session } from 'src/helpers';
 import { pcrypt } from 'src/utils';
 import { v7 } from 'uuid';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 import { middlewares } from '../middlewares';
 
@@ -40,10 +40,11 @@ app.post(
       .object({
         mobile: z.string().optional(),
         mfaCode: z.string().optional(),
-        email: z.string().email().optional(),
+        email: z.email().optional(),
         password: z
           .string({
-            required_error: '"Password" is required',
+            error: ({ input }) =>
+              isNullish(input) ? 'This field is required' : 'Not a string',
           })
           .regex(/^[a-f0-9]{64}$/i),
       })
@@ -108,13 +109,12 @@ app.post(
   validator('json', async (value) =>
     z
       .object({
-        email: z
-          .string({
-            required_error: '"Email" is required',
-          })
-          .email({
-            message: '"Email" must be a valid email',
-          }),
+        email: z.email({
+          error: ({ input, message }) => {
+            if (isString(message)) return message;
+            return isNullish(input) ? 'This field is required' : 'Not a string';
+          },
+        }),
       })
       .parse(value),
   ),
@@ -134,17 +134,20 @@ app.post(
     const { email, mobile, password, ...others } = z
       .object({
         name: z.string({
-          required_error: '"Name" is required',
+          error: ({ input }) =>
+            isNullish(input) ? 'This field is required' : 'Not a string',
         }),
         email: z.string().email().optional(),
         mobile: z.string().optional(),
         password: z
           .string({
-            required_error: '"Password" is required',
+            error: ({ input }) =>
+              isNullish(input) ? 'This field is required' : 'Not a string',
           })
           .regex(/^[a-f0-9]{64}$/i),
         captcha: z.string({
-          required_error: '"Captcha" is required',
+          error: ({ input }) =>
+            isNullish(input) ? 'This field is required' : 'Not a string',
         }),
       })
       .parse(value);

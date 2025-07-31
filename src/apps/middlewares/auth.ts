@@ -22,10 +22,13 @@ export const iAuth = () => {
       // 白名单
       api.startsWith('/github') ||
       api.startsWith('/oauth2') ||
-      api.startsWith('/captcha') ||
       api.startsWith('/user/oauth2') ||
       api.startsWith('/user/signin') ||
-      api.startsWith('/member/signin')
+      api.startsWith('/user/signup') ||
+      api.startsWith('/user/email/captcha') ||
+      api.startsWith('/member/signin') ||
+      api.startsWith('/member/signup') ||
+      api.startsWith('/member/email/captcha')
     ) {
       report.info(`Spik auth:${api}`, { name: 'Auth' });
     } else if (res?.id) {
