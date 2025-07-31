@@ -1,4 +1,4 @@
-FROM node:22-alpine AS base
+FROM guergeiro/pnpm:22-10 AS base
 
 FROM base AS builder
 
@@ -7,9 +7,9 @@ WORKDIR /app
 
 COPY package*json tsconfig.json src ./
 
-RUN npm ci && \
-    npm run build && \
-    npm prune --production
+RUN pnpm install --frozen-lockfile && \
+    pnpm run build && \
+    pnpm prune --prod
 
 FROM base AS runner
 WORKDIR /app
@@ -24,4 +24,4 @@ COPY --from=builder --chown=hono:nodejs /app/package.json /app/package.json
 USER hono
 EXPOSE 3000
 
-CMD ["node", "/app/dist/index.js"]
+CMD ["node", "/app/dist/run.js"]
