@@ -13,6 +13,7 @@ RUN pnpm install --frozen-lockfile && \
     pnpm prune --prod
 
 ENV CI='true'
+ENV HUSKY=0
 
 FROM base AS runner
 WORKDIR /app
