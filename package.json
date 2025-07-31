@@ -2,8 +2,8 @@
   "name": "@busymango/server",
   "scripts": {
     "dev": "dotenvx run -- tsx watch src/run.ts",
-    "build": "tsc -p tsconfig.json",
-    "start": "dotenvx run -- node dist/run.js",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "dotenvx run -- node ./dist/src/run.js",
     "local": "dotenvx run -f .env.local -- tsx watch src/run.ts",
     "test": "dotenvx run -- tsx --test $(find test -type f -name '*.spec.ts')",
     "format": "biome check --write . && biome format --write --colors=force --verbose .",
