@@ -39,9 +39,16 @@
           "level": "on",
           "options": {
             "groups": [
-              [":NODE:", ":BUN:"],
+              [
+                ":NODE:",
+                ":BUN:"
+              ],
               ":BLANK_LINE:",
-              ["hono", "hono/**", "@hono/**"],
+              [
+                "hono",
+                "hono/**",
+                "@hono/**"
+              ],
               ":BLANK_LINE:",
               ":PACKAGE:",
               ":BLANK_LINE:",
@@ -58,7 +65,13 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!dist/**/*", "!**/node_modules/**/*", "!**/global.d.ts"]
+    "includes": [
+      "**",
+      "!.drizzle/**/*",
+      "!dist/**/*",
+      "!**/node_modules/**/*",
+      "!**/global.d.ts"
+    ]
   },
   "linter": {
     "enabled": true,
@@ -113,55 +126,75 @@
                 "selector": {
                   "kind": "objectLiteralMember"
                 },
-                "formats": ["snake_case", "camelCase"]
+                "formats": [
+                  "snake_case",
+                  "camelCase"
+                ]
               },
               {
                 "selector": {
                   "kind": "enumMember"
                 },
                 "match": "_?([^_]*)_?",
-                "formats": ["PascalCase"]
+                "formats": [
+                  "PascalCase"
+                ]
               },
               {
                 "selector": {
                   "kind": "typeMember"
                 },
-                "formats": ["snake_case", "camelCase", "PascalCase"]
+                "formats": [
+                  "snake_case",
+                  "camelCase",
+                  "PascalCase"
+                ]
               },
               {
                 "selector": {
                   "kind": "const",
                   "scope": "global"
                 },
-                "formats": ["CONSTANT_CASE", "camelCase"]
+                "formats": [
+                  "CONSTANT_CASE",
+                  "camelCase"
+                ]
               },
               {
                 "selector": {
                   "kind": "enum"
                 },
                 "match": "_?([^_]*)_?",
-                "formats": ["PascalCase"]
+                "formats": [
+                  "PascalCase"
+                ]
               },
               {
                 "selector": {
                   "kind": "interface"
                 },
                 "match": "_?([^_]*)_?",
-                "formats": ["PascalCase"]
+                "formats": [
+                  "PascalCase"
+                ]
               },
               {
                 "selector": {
                   "kind": "typeAlias"
                 },
                 "match": "_?([^_]*)_?",
-                "formats": ["PascalCase"]
+                "formats": [
+                  "PascalCase"
+                ]
               },
               {
                 "selector": {
                   "kind": "typeParameter"
                 },
                 "match": "_?([^_]*)_?",
-                "formats": ["PascalCase"]
+                "formats": [
+                  "PascalCase"
+                ]
               }
             ]
           }
@@ -203,7 +236,12 @@
   },
   "overrides": [
     {
-      "includes": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
+      "includes": [
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.mts",
+        "**/*.cts"
+      ],
       "linter": {
         "rules": {
           "correctness": {
@@ -232,7 +270,12 @@
       }
     },
     {
-      "includes": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
+      "includes": [
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.mts",
+        "**/*.cts"
+      ],
       "linter": {
         "rules": {
           "correctness": {
@@ -261,7 +304,12 @@
       }
     },
     {
-      "includes": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
+      "includes": [
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.mts",
+        "**/*.cts"
+      ],
       "linter": {
         "rules": {
           "correctness": {

@@ -10,7 +10,7 @@
     "drizzle:migrate": "tsx scripts/@drizzle.ts -c migrate",
     "env:encrypt": "tsx scripts/@encrypt.ts",
     "env:audit": "tsx scripts/@audit.ts",
-    "prepare": "husky"
+    "prepare": "tsx scripts/@husky.ts"
   },
   "type": "module",
   "dependencies": {
