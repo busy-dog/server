@@ -2,7 +2,7 @@ FROM guergeiro/pnpm:22-10 AS base
 
 FROM base AS builder
 
-RUN apk add --no-cache gcompat
+# RUN apk add --no-cache gcompat
 WORKDIR /app
 
 COPY package*json tsconfig.json src ./
