@@ -8,7 +8,7 @@ WORKDIR /app
 COPY .env package*json pnpm-lock.yaml src global.d.ts ./
 COPY tsconfig.build.json ./tsconfig.json
 
-RUN pnpm install --frozen-lockfile && \
+RUN pnpm install --frozen-lockfile --ignore-scripts && \
     pnpm run build && \
     pnpm prune --prod
 
